@@ -1,14 +1,15 @@
-# TimeTracker iOS App
+# LocalTrack Browser Extension
 
 ## Goal
-Build a native iOS application for time tracking with Jira integration.
+Build a privacy-first, local-only Browser Extension called 'LocalTrack' for tracking project time. The extension must operate entirely offline with zero cloud dependency, accounts, or telemetry.
 
 ## Architecture
-- **UI**: SwiftUI Dashboard, Settings, Timer View
-- **Networking**: Pure Swift `URLSession` for Jira API
-- **Storage**: SwiftData for local persistence
-- **Testing**: `pytest` for static analysis of Swift code
+- **UI**: Vanilla JS, HTML, CSS, Manifest V3.
+- **Storage**: chrome.storage.local for timer state and entries.
+- **Export**: Blob and URL.createObjectURL for JSON/CSV.
+- **Testing**: pytest with static file validation and logic checks.
 
 ## Sprint Status
-- Meeting 2: Refactored to pure Swift. Removed PythonKit and Chrome artifacts.
-- Next: Implement background suspension handling and complete UI polish.
+- Meeting 1: Architecture design, API research, dependency selection.
+- Meeting 2: Implemented core extension files, persistence logic, and acceptance tests.
+- Next: Verify tests pass, refine UI, and finalize export functionality.

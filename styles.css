@@ -1,0 +1,8 @@
+body { font-family: sans-serif; width: 300px; padding: 10px; }
+#timer-display { font-size: 2em; text-align: center; }
+#timer-controls button { margin: 5px; }
+#manual-entry { margin-top: 20px; }
+#entry-form input, #entry-form textarea { display: block; width: 100%; margin-bottom: 5px; }
+#entries-list { margin-top: 20px; }
+#entries-list li { font-size: 0.8em; }
+#export-controls button { margin: 5px; width: 100%; }
