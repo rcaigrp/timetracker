@@ -1,91 +1,183 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const startBtn = document.getElementById('start-btn');
+  const pauseBtn = document.getElementById('pause-btn');
+  const stopBtn = document.getElementById('stop-btn');
+  const timerDisplay = document.getElementById('timer-display');
+  const todayTotal = document.getElementById('today-total');
+  const entriesList = document.getElementById('entries-list');
+  const manualForm = document.getElementById('manual-form');
+  const exportJsonBtn = document.getElementById('export-json');
+  const exportCsvBtn = document.getElementById('export-csv');
+
+  let timerInterval;
+  let isRunning = false;
+
+  // Load timer state
   chrome.storage.local.get(['timerState', 'entries'], (data) => {
-    updateUI(data.timerState || { isRunning: false, startTime: null, pausedTime: 0, elapsed: 0 }, data.entries || []);
-  });
-
-  chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'local' && changes.timerState) {
-      updateUI(changes.timerState.newValue, null);
+    if (data.timerState && data.timerState.status === 'running') {
+      startTimer(data.timerState.startTime);
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      stopBtn.disabled = false;
+      isRunning = true;
+    } else {
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      stopBtn.disabled = true;
+      isRunning = false;
     }
+    loadEntries(data.entries || []);
+    loadSummary(data.entries || []);
   });
 
-  document.getElementById('start').onclick = () => chrome.runtime.sendMessage({ type: 'START' });
-  document.getElementById('pause').onclick = () => chrome.runtime.sendMessage({ type: 'PAUSE' });
-  document.getElementById('resume').onclick = () => chrome.runtime.sendMessage({ type: 'RESUME' });
-  document.getElementById('stop').onclick = () => chrome.runtime.sendMessage({ type: 'STOP' });
+  function startTimer(startTime) {
+    const update = () => {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const hours = Math.floor(elapsed / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+      timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
+    update();
+    timerInterval = setInterval(update, 1000);
+  }
 
-  document.getElementById('manual-entry').onsubmit = (e) => {
-    e.preventDefault();
-    const project = document.getElementById('project').value;
-    const date = document.getElementById('date').value;
-    const hours = parseFloat(document.getElementById('hours').value) || 0;
-    const minutes = parseFloat(document.getElementById('minutes').value) || 0;
-    const notes = document.getElementById('notes').value;
-    const duration = (hours * 60 + minutes) * 1000;
+  startBtn.addEventListener('click', () => {
+    const startTime = Date.now();
+    chrome.storage.local.set({ timerState: { status: 'running', startTime } });
+    startTimer(startTime);
+    startBtn.disabled = true;
+    pauseBtn.disabled = false;
+    stopBtn.disabled = false;
+    isRunning = true;
+  });
 
-    const entry = { id: Date.now(), project, date, startTime: 0, endTime: 0, duration, notes };
-    chrome.storage.local.get('entries', (data) => {
+  pauseBtn.addEventListener('click', () => {
+    clearInterval(timerInterval);
+    chrome.storage.local.set({ timerState: { status: 'paused', startTime: null } });
+    pauseBtn.disabled = true;
+    stopBtn.disabled = true;
+    startBtn.disabled = false;
+    isRunning = false;
+  });
+
+  stopBtn.addEventListener('click', () => {
+    clearInterval(timerInterval);
+    const endTime = Date.now();
+    const startTime = getStoredStartTime();
+    const duration = endTime - startTime;
+    const entry = {
+      id: Date.now(),
+      project: 'Timer Entry',
+      date: new Date().toISOString().split('T')[0],
+      startTime: new Date(startTime).toLocaleTimeString(),
+      endTime: new Date(endTime).toLocaleTimeString(),
+      duration: duration,
+      notes: ''
+    };
+    chrome.storage.local.get(['entries'], (data) => {
       const entries = data.entries || [];
-      entries.push(entry);
-      chrome.storage.local.set({ entries });
+      entries.unshift(entry);
+      chrome.storage.local.set({ entries, timerState: { status: 'stopped' } });
+      loadEntries(entries);
+      loadSummary(entries);
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      stopBtn.disabled = true;
+      isRunning = false;
+      timerDisplay.textContent = '00:00:00';
     });
-    e.target.reset();
-  };
+  });
 
-  document.getElementById('export-json').onclick = () => exportJSON();
-  document.getElementById('export-csv').onclick = () => exportCSV();
-  document.getElementById('clear').onclick = () => clearStorage();
+  function getStoredStartTime() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get('timerState', (data) => {
+        resolve(data.timerState.startTime);
+      });
+    });
+  }
+
+  manualForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const projectName = document.getElementById('project-name').value;
+    const date = document.getElementById('entry-date').value;
+    const durationStr = document.getElementById('duration').value;
+    const notes = document.getElementById('notes').value;
+
+    const [hours, minutes] = durationStr.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) {
+      alert('Invalid duration format. Use h:mm');
+      return;
+    }
+    const duration = (hours * 60 + minutes) * 60 * 1000;
+
+    const entry = {
+      id: Date.now(),
+      project: projectName,
+      date: date,
+      startTime: '',
+      endTime: '',
+      duration: duration,
+      notes: notes
+    };
+
+    chrome.storage.local.get(['entries'], (data) => {
+      const entries = data.entries || [];
+      entries.unshift(entry);
+      chrome.storage.local.set({ entries });
+      loadEntries(entries);
+      loadSummary(entries);
+      manualForm.reset();
+    });
+  });
+
+  exportJsonBtn.addEventListener('click', () => {
+    chrome.storage.local.get('entries', (data) => {
+      const blob = new Blob([JSON.stringify(data.entries, null, 2)]);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'localtrack_entries.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  });
+
+  exportCsvBtn.addEventListener('click', () => {
+    chrome.storage.local.get('entries', (data) => {
+      const entries = data.entries;
+      if (!entries || entries.length === 0) {
+        alert('No entries to export');
+        return;
+      }
+      const csv = entries.map(e => `${e.id},${e.project},${e.date},${e.duration},${e.notes}`).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'localtrack_entries.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  });
+
+  function loadEntries(entries) {
+    entriesList.innerHTML = '';
+    entries.forEach(entry => {
+      const li = document.createElement('li');
+      li.textContent = `${entry.project} - ${entry.date} (${(entry.duration / (1000 * 60)).toFixed(1)}m)`;
+      entriesList.appendChild(li);
+    });
+  }
+
+  function loadSummary(entries) {
+    const today = new Date().toISOString().split('T')[0];
+    const todayEntries = entries.filter(e => e.date === today);
+    const totalMs = todayEntries.reduce((sum, e) => sum + e.duration, 0);
+    const totalHours = (totalMs / (1000 * 60 * 60)).toFixed(2);
+    todayTotal.textContent = `${totalHours} hours`;
+  }
 });
-
-function updateUI(state, entries) {
-  const display = document.getElementById('timer-display');
-  const totalSpan = document.getElementById('today-total');
-  if (state) {
-    const elapsed = state.isRunning ? Date.now() - state.startTime - state.pausedTime : state.elapsed;
-    display.textContent = formatTime(elapsed);
-  }
-  if (entries) {
-    const list = document.getElementById('entries-list');
-    list.innerHTML = entries.slice(-5).map(e => `<div>${e.project} - ${formatTime(e.duration)}</div>`).join('');
-  }
-}
-
-function formatTime(ms) {
-  const h = Math.floor(ms / 3600000);
-  const m = Math.floor((ms % 3600000) / 60000);
-  const s = Math.floor((ms % 60000) / 1000);
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-}
-
-function exportJSON() {
-  chrome.storage.local.get('entries', (data) => {
-    const blob = new Blob([JSON.stringify(data.entries, null, 2)]);
-    download(blob, 'localtrack.json');
-  });
-}
-
-function exportCSV() {
-  chrome.storage.local.get('entries', (data) => {
-    const headers = ['Project', 'Date', 'Duration (ms)', 'Notes'];
-    const rows = data.entries.map(e => [e.project, e.date, e.duration, e.notes]);
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv]);
-    download(blob, 'localtrack.csv');
-  });
-}
-
-function download(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function clearStorage() {
-  chrome.storage.local.clear();
-  location.reload();
-}
