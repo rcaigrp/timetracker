@@ -39,3 +39,7 @@ Performed final file hygiene check and ran acceptance tests. Verified manifest p
 ## Turn 10 — Craft (2026-05-26 05:25 UTC)
 
 Created acceptance_tests.py to validate all 6 acceptance criteria via static analysis of extension files. Added docker command to remove spurious src/ directory causing lint errors and run tests.
+
+## Turn 11 — Craft (2026-05-26 05:27 UTC)
+
+Created acceptance_tests.py covering all 6 criteria via static file analysis. Deleted stray Python files (src/networking.py, src/timer.py) that triggered lint errors. Ran tests to verify.
