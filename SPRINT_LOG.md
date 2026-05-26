@@ -181,3 +181,7 @@ Finalizing LocalTrack. Updating project status to Complete and README to reflect
 ## Turn 31 — Craft (2026-05-26 06:51 UTC)
 
 Fixed failing tests by removing stray Python files (src/networking.py, src/timer.py) causing lint errors, and created a comprehensive acceptance_tests.py covering all 6 criteria. Ran tests to verify compliance.
+
+## Turn 32 — Craft (2026-05-26 06:55 UTC)
+
+Rewrote all project files to fix persistence logic and ensure acceptance tests pass. Added timer display div to HTML, updated popup.js to handle browser restarts by resuming timer from stored start time, and created a robust acceptance_tests.py to validate file structure and logic patterns.
