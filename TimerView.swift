@@ -1,26 +1,27 @@
 import SwiftUI
+import SwiftData
 
 struct TimerView: View {
     @State private var isRunning = false
-    @State private var elapsed: TimeInterval = 0
-    private var timer: Timer?
+    @Environment(\.modelContext) private var context
     
     var body: some View {
-        VStack {
-            Text("Elapsed: \(elapsed.formatted(.number.unit(.second)))")
-            Button(isRunning ? "Pause" : "Start") {
-                if isRunning {
-                    timer?.invalidate()
-                    timer = nil
-                } else {
-                    timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                        elapsed += 1
-                    }
-                }
-                isRunning.toggle()
+        Button(isRunning ? "Stop" : "Start") {
+            if isRunning {
+                stopTimer()
+            } else {
+                startTimer()
             }
-            .buttonStyle(.borderedProminent)
         }
-        .padding()
+    }
+    
+    private func startTimer() {
+        isRunning = true
+        let entry = TimerEntry(id: UUID().uuidString, projectName: "Project", startTime: Date(), endTime: nil, duration: 0)
+        context.append(entry)
+    }
+    
+    private func stopTimer() {
+        isRunning = false
     }
 }

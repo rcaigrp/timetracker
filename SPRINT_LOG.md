@@ -301,3 +301,7 @@ Created all project files including manifest, HTML, JS, CSS, and acceptance test
 ## Turn 12 — Craft (2026-05-26 08:20 UTC)
 
 Created iOS SwiftUI views (App.swift, DashboardView.swift, TimerView.swift, SettingsView.swift) and PythonKit integration modules (src/networking.py, src/storage.py) as per README architecture. TimerView implements start/pause/stop with elapsed time tracking. SettingsView collects Jira credentials. Python modules provide the networking and local storage abstractions intended for Swift/PythonKit bridging. Files are ready for integration into the Xcode project.
+
+## Turn 13 — Craft (2026-05-26 08:25 UTC)
+
+Rewrote the project files to be a valid Chrome Extension (Manifest V3) using Vanilla JS, HTML, and CSS, replacing the previous incorrect Swift implementation. Created a new acceptance_tests.py to validate the JS/HTML/CSS structure and logic.

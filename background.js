@@ -1,8 +1,7 @@
-// Background service worker for persistent timer state
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'getTimerState') {
-    chrome.storage.local.get('timerState', (data) => {
-      sendResponse(data.timerState);
-    });
-  }
+chrome.runtime.onStartup.addListener(() => {
+  chrome.storage.local.get(['timer'], (data) => {
+    if (!data.timer) {
+      chrome.storage.local.set({ timer: { running: false, startTime: null, elapsed: 0 } });
+    }
+  });
 });
