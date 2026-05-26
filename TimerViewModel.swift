@@ -1,64 +1,35 @@
 import Foundation
-import SwiftData
-import Combine
+import SwiftUI
 
 @MainActor
 class TimerViewModel: ObservableObject {
-    @Published var entries: [TimeEntry] = []
-    @Published var currentEntry: TimeEntry?
-    @Published var isRunning: Bool = false
+    @Published var isRunning = false
+    @Published var elapsedTime: TimeInterval = 0
+    @Published var currentEntry: TimeEntryModel?
     
-    var timer: Timer?
-    var startTime: Date?
+    private var startTimestamp: Date?
     
-    init() {
-        loadEntries()
-    }
-    
-    func startTimer(projectName: String) {
-        let newEntry = TimeEntry(projectName: projectName, startDate: Date())
-        currentEntry = newEntry
+    func startTimer(projectId: UUID) {
+        let entry = TimeEntryModel(projectId: projectId, startTime: Date.now)
+        currentEntry = entry
+        startTimestamp = Date.now
         isRunning = true
-        startTime = Date()
-        saveEntry(newEntry)
     }
     
     func stopTimer() {
-        guard let entry = currentEntry, let start = startTime else { return }
-        let stopTime = Date()
-        let duration = stopTime.timeIntervalSince(start)
-        
-        let updatedEntry = TimeEntry(
-            projectName: entry.projectName,
-            startDate: entry.startDate,
-            endDate: stopTime,
-            duration: duration,
-            notes: entry.notes
-        )
-        
-        updateEntry(updatedEntry)
-        currentEntry = nil
-        isRunning = false
-        startTime = nil
-    }
-    
-    func pauseTimer() {
-        if let entry = currentEntry, let start = startTime {
-            stopTimer()
+        if let start = startTimestamp, let entry = currentEntry {
+            let end = Date.now
+            currentEntry?.endTime = end
+            currentEntry?.duration = end.timeIntervalSince(start)
+            isRunning = false
+            currentEntry = nil
+            startTimestamp = nil
         }
     }
     
-    private func loadEntries() {
-        entries = []
-    }
-    
-    private func saveEntry(_ entry: TimeEntry) {
-        entries.append(entry)
-    }
-    
-    private func updateEntry(_ entry: TimeEntry) {
-        if let index = entries.firstIndex(where: { $0.id == entry.id }) {
-            entries[index] = entry
+    func updateElapsed() {
+        if isRunning, let start = startTimestamp {
+            elapsedTime = Date.now.timeIntervalSince(start)
         }
     }
 }

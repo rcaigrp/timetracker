@@ -1,27 +1,34 @@
 import SwiftUI
-import SwiftData
 
 struct TimerView: View {
-    @State private var isRunning = false
-    @Environment(\.modelContext) private var context
+    @ObservedObject var timerState: TimerState
+    @ObservedObject var pythonBridge: PythonBridge
     
     var body: some View {
-        Button(isRunning ? "Stop" : "Start") {
-            if isRunning {
-                stopTimer()
-            } else {
-                startTimer()
+        VStack {
+            Text(timerState.elapsed)
+                .font(.system(size: 64, weight: .bold))
+                .foregroundColor(.primary)
+            
+            HStack {
+                Button(action: {
+                    if !timerState.isRunning {
+                        pythonBridge.startTimer(project: timerState.currentProject)
+                        timerState.isRunning = true
+                    }
+                }) {
+                    Text("Start")
+                        .padding()
+                }
+                
+                Button(action: {
+                    pythonBridge.stopTimer()
+                    timerState.isRunning = false
+                }) {
+                    Text("Stop")
+                        .padding()
+                }
             }
         }
-    }
-    
-    private func startTimer() {
-        isRunning = true
-        let entry = TimerEntry(id: UUID().uuidString, projectName: "Project", startTime: Date(), endTime: nil, duration: 0)
-        context.append(entry)
-    }
-    
-    private func stopTimer() {
-        isRunning = false
     }
 }

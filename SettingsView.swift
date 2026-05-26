@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("api_key") private var apiKey: String = ""
-    
     var body: some View {
         Form {
+            Section(header: Text("Jira Integration"))
+            TextField("Base URL", text: $jiraUrl)
+            TextField("Username", text: $username)
             SecureField("API Key", text: $apiKey)
         }
     }

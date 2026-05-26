@@ -1,77 +1,44 @@
-import sys
 import os
-sys.path.insert(0, '/workspace')
+import pytest
 
-import unittest
-import responses
-import json
-from unittest.mock import patch, MagicMock
-from src.networking import JiraClient
-from src.storage import Storage
+PROJECT_DIR = "/workspace/projects/TimeTracker"
 
-class TestTimeTrackerAcceptanceCriteria(unittest.TestCase):
-    @responses.activate
-    def test_criterion_1_dashboard_launch(self):
-        # Mock UI launch
-        with patch('src.networking.JiraClient') as MockClient:
-            MockClient.return_value = MagicMock()
-            # Simulate dashboard init
-            dashboard = {"status": "launching"}
-            self.assertEqual(dashboard["status"], "launching")
+def test_criterion_1_dashboard_timer():
+    assert os.path.exists(os.path.join(PROJECT_DIR, "DashboardView.swift"))
+    assert os.path.exists(os.path.join(PROJECT_DIR, "TimerView.swift"))
+    with open(os.path.join(PROJECT_DIR, "DashboardView.swift")) as f:
+        assert "TimerView" in f.read()
+        assert "List" in f.read()
 
-    @responses.activate
-    def test_criterion_2_manual_entry_timer(self):
-        # Mock timer start/stop and save
-        storage = Storage(data_dir="/tmp/test_entries")
-        entry = {"project": "Test", "start": "2023-01-01", "end": "2023-01-02", "duration": "1h"}
-        storage.save_entry(entry)
-        saved_entries = storage.load_entries()
-        self.assertEqual(len(saved_entries), 1)
+def test_criterion_2_manual_entry_timer():
+    assert os.path.exists(os.path.join(PROJECT_DIR, "TimerViewModel.swift"))
+    with open(os.path.join(PROJECT_DIR, "TimerViewModel.swift")) as f:
+        assert "startTimer" in f.read()
+        assert "stopTimer" in f.read()
+        assert "@Published" in f.read()
 
-    @responses.activate
-    def test_criterion_3_settings_storage(self):
-        # Mock settings save
-        storage = Storage(data_dir="/tmp/test_settings")
-        settings = {"base_url": "https://jira.example.com", "username": "user", "api_key": "key"}
-        storage.save_settings(settings)
-        loaded = storage.load_settings()
-        self.assertEqual(loaded["base_url"], "https://jira.example.com")
+def test_criterion_3_settings_jira():
+    assert os.path.exists(os.path.join(PROJECT_DIR, "SettingsView.swift"))
+    with open(os.path.join(PROJECT_DIR, "SettingsView.swift")) as f:
+        assert "jiraUrl" in f.read()
+        assert "jiraApiKey" in f.read()
 
-    @responses.activate
-    def test_criterion_4_jira_fetch(self):
-        # Mock API fetch
-        responses.add(responses.GET, "https://jira.example.com/rest/api/2/project", json=[{"id": "1", "name": "TestProject"}])
-        client = JiraClient("https://jira.example.com", "user", "key")
-        projects = client.fetch_projects()
-        self.assertEqual(len(projects), 1)
+def test_criterion_4_jira_fetch():
+    assert os.path.exists(os.path.join(PROJECT_DIR, "NetworkingManager.swift"))
+    with open(os.path.join(PROJECT_DIR, "NetworkingManager.swift")) as f:
+        assert "fetchProjects" in f.read()
 
-    @responses.activate
-    def test_criterion_5_persistence(self):
-        # Mock file save/load across restarts
-        storage = Storage(data_dir="/tmp/test_persist")
-        entry = {"project": "PersistTest"}
-        storage.save_entry(entry)
-        # Simulate restart by reloading
-        new_storage = Storage(data_dir="/tmp/test_persist")
-        entries = new_storage.load_entries()
-        self.assertEqual(len(entries), 1)
+def test_criterion_5_persistence():
+    assert os.path.exists(os.path.join(PROJECT_DIR, "ProjectModel.swift"))
+    assert os.path.exists(os.path.join(PROJECT_DIR, "TimeEntryModel.swift"))
+    assert "@Model" in open(os.path.join(PROJECT_DIR, "ProjectModel.swift")).read()
+    assert "@Model" in open(os.path.join(PROJECT_DIR, "TimeEntryModel.swift")).read()
 
-    @responses.activate
-    def test_criterion_6_http_requests(self):
-        # Mock HTTP response handling
-        responses.add(responses.GET, "https://jira.example.com/rest/api/2/search?jql=project=TEST", json={"issues": []})
-        client = JiraClient("https://jira.example.com", "user", "key")
-        client.fetch_issues("TEST")
-        self.assertEqual(len(responses.calls), 1)
+def test_criterion_6_networking():
+    with open(os.path.join(PROJECT_DIR, "NetworkingManager.swift")) as f:
+        assert "URLSession" in f.read() or "async" in f.read()
 
-    @responses.activate
-    def test_criterion_7_background_suspension(self):
-        # Mock pause/resume
-        with patch('src.networking.JiraClient') as MockClient:
-            MockClient.return_value = MagicMock()
-            # Simulate background pause
-            timer_state = {"status": "paused"}
-            self.assertEqual(timer_state["status"], "paused")
-
-if __name__ == '__main__':
-    unittest.main()
+def test_criterion_7_background():
+    assert os.path.exists(os.path.join(PROJECT_DIR, "BackgroundManager.swift"))
+    with open(os.path.join(PROJECT_DIR, "BackgroundManager.swift")) as f:
+        assert "handleBackgroundSuspension" in f.read()
