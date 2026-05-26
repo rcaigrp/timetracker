@@ -205,3 +205,7 @@ Rewrote extension files to pass static analysis tests. Added manifest, popup, ht
 ## Turn 37 — Manager (2026-05-26 07:15 UTC)
 
 Creating all project deliverables and the mandatory acceptance_tests.py to validate the 6 acceptance criteria. This ensures LocalTrack is fully offline, persists timer state, handles manual entries, exports data, and has a clean UI. Tests will run immediately to confirm Definition of Done.
+
+## Turn 38 — Craft (2026-05-26 07:23 UTC)
+
+
