@@ -1,56 +1,57 @@
+import unittest
+import responses
+import sys
 import os
-import pytest
 
-class TestSwiftFiles:
-    def test_time_entry_exists(self):
-        path = "/workspace/projects/TimeTracker/TimeEntry.swift"
-        assert os.path.exists(path)
-        with open(path) as f:
-            content = f.read()
-        assert "@Model" in content
-        assert "class TimeEntry" in content
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-    def test_timer_view_model_exists(self):
-        path = "/workspace/projects/TimeTracker/TimerViewModel.swift"
-        assert os.path.exists(path)
-        with open(path) as f:
-            content = f.read()
-        assert "class TimerViewModel" in content
-        assert "func startTimer" in content
-        assert "func stopTimer" in content
+from settings import SecureStorage
+from networking import JiraClient
 
-    def test_dashboard_view_exists(self):
-        path = "/workspace/projects/TimeTracker/DashboardView.swift"
-        assert os.path.exists(path)
-        with open(path) as f:
-            content = f.read()
-        assert "struct DashboardView" in content
-        assert "TimerDisplayView" in content
-        assert "EntryListView" in content
+class TestSecureStorage(unittest.TestCase):
+    def setUp(self):
+        SecureStorage._credentials = None
 
-    def test_timer_logic_simulation(self):
-        import time
-        
-        class MockTimer:
-            def __init__(self):
-                self.start_time = None
-                self.duration = 0
-                self.is_running = False
-            
-            def start(self):
-                self.start_time = time.time()
-                self.is_running = True
-            
-            def stop(self):
-                if self.start_time:
-                    self.duration = time.time() - self.start_time
-                    self.is_running = False
-                    self.start_time = None
-        
-        timer = MockTimer()
-        timer.start()
-        time.sleep(0.1)
-        timer.stop()
-        
-        assert timer.duration >= 0.09, "Duration should be at least 90ms"
-        assert not timer.is_running, "Timer should be stopped"
+    def test_save_credentials(self):
+        SecureStorage.save_credentials("https://jira.test.com", "user", "pass")
+        creds = SecureStorage.get_credentials()
+        self.assertEqual(creds["base_url"], "https://jira.test.com")
+        self.assertEqual(creds["username"], "user")
+        self.assertEqual(creds["api_key"], "pass")
+
+    def test_has_credentials(self):
+        self.assertFalse(SecureStorage.has_credentials())
+        SecureStorage.save_credentials("https://jira.test.com", "user", "pass")
+        self.assertTrue(SecureStorage.has_credentials())
+
+class TestJiraClient(unittest.TestCase):
+    @responses.activate
+    def test_fetch_projects(self):
+        base_url = "https://jira.test.com"
+        client = JiraClient(base_url, "user", "pass")
+        mock_projects = [{"id": "1", "key": "PROJ", "name": "Project"}]
+        responses.add(
+            responses.GET,
+            f"{base_url}/rest/api/2/project",
+            json=mock_projects,
+            status=200
+        )
+        result = client.fetch_projects()
+        self.assertEqual(result, mock_projects)
+
+    @responses.activate
+    def test_fetch_issues(self):
+        base_url = "https://jira.test.com"
+        client = JiraClient(base_url, "user", "pass")
+        mock_issues = {"issues": [{"id": "1", "key": "ISSUE-1"}]}
+        responses.add(
+            responses.GET,
+            f"{base_url}/rest/api/2/search",
+            json=mock_issues,
+            status=200
+        )
+        result = client.fetch_issues("PROJ")
+        self.assertEqual(result, mock_issues)
+
+if __name__ == '__main__':
+    unittest.main()

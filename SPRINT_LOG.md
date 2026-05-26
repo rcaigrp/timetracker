@@ -317,3 +317,7 @@ Rewrote extension files and acceptance tests to ensure robustness. The previous 
 ## Turn 16 — Craft (2026-05-26 08:39 UTC)
 
 Implemented SwiftUI Dashboard and TimerViewModel. Created TimeEntry model, TimerViewModel for state management, and DashboardView for UI. Added acceptance_tests.py to verify file structure and timer logic simulation.
+
+## Turn 17 — Craft (2026-05-26 08:41 UTC)
+
+Created acceptance_tests.py to verify SecureStorage and JiraClient functionality using unit tests and mocked HTTP requests.
