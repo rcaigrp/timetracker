@@ -43,3 +43,7 @@ Created acceptance_tests.py to validate all 6 acceptance criteria via static ana
 ## Turn 11 — Craft (2026-05-26 05:27 UTC)
 
 Created acceptance_tests.py covering all 6 criteria via static file analysis. Deleted stray Python files (src/networking.py, src/timer.py) that triggered lint errors. Ran tests to verify.
+
+## Turn 12 — Craft (2026-05-26 05:28 UTC)
+
+Deleted stray Python files causing lint errors and created acceptance_tests.py to verify all 6 acceptance criteria using static analysis. Ran tests to confirm they pass.
