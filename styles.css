@@ -1,6 +1,0 @@
-body { width: 300px; font-family: sans-serif; }
-.container { padding: 10px; }
-.controls button { margin: 5px; }
-#manual-entry { margin-top: 20px; }
-#manual-entry input, #manual-entry textarea { width: 100%; }
-#entries-list { margin-top: 20px; }
