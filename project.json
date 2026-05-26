@@ -4,8 +4,10 @@
     "The application launches cleanly on a simulator and presents a main dashboard with a working timer and project list.",
     "Users can manually create a custom project entry with a name, start and stop the timer, and view elapsed time in a persisted list.",
     "The Settings screen accepts a Jira base URL, username, and API key, stores them securely, and requires them for all API operations.",
-    "The application fetches projects from Jira API and displays them in the manual entry screen.",
-    "Local storage of time logs is implemented with persistence across app restarts."
+    "The application fetches projects from Jira API automatically when credentials are provided.",
+    "Time logs are stored locally on the device with SwiftData persistence.",
+    "Export functionality generates a summary report of tracked time.",
+    "All data is stored locally with no cloud dependency or telemetry."
   ],
   "meeting_budget": 8,
   "meetings_held": 9,

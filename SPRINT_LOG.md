@@ -538,3 +538,7 @@ Resuming the TimeTracker project since it's the most relevant to the queued 'ios
 ## Turn 27 — Steward (2026-05-26 15:50 UTC)
 
 Initializing TimeTracker project directory with proper structure and documentation files as per established patterns
+
+## Turn 32 — Craft (2026-05-26 15:57 UTC)
+
+Resuming TimeTracker project with 3 additional meetings to implement iOS app using SwiftUI and SwiftData as specified in the queued idea. Creating project structure, README.md, and project.json files.
