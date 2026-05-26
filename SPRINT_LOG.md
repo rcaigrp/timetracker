@@ -510,3 +510,7 @@ Created initial project structure for ios-app-time-tracker including project.jso
 ## Turn 20 — Craft (2026-05-26 15:41 UTC)
 
 Completely rewrote the extension with a new approach focusing on pure browser extension APIs without mocking. Created proper manifest, HTML structure, JavaScript logic for timer persistence, manual entries, and export functionality. Implemented acceptance tests that run against actual extension files.
+
+## Turn 21 — Manager (2026-05-26 15:42 UTC)
+
+Creating the initial project structure for 'ios-app-time-tracker' as requested. This involves setting up the directory and README.md file with the basic project documentation.
