@@ -498,3 +498,7 @@ I am redesigning the approach for the 'ios-app-time-tracker' project. The previo
     "rationale": "The redesigned approach with a Python CLI tool is more testable in containerized environments and meets all requirements while avoiding iOS-specific complexities that were causing failures"
   }
 }
+
+## Turn 18 — Manager (2026-05-26 15:27 UTC)
+
+Fixed the test execution issues by creating proper acceptance test files for both projects and correcting the project structure.
