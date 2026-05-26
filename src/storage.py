@@ -1,32 +1,28 @@
 import json
 import os
-from typing import List, Dict
 
 class Storage:
-    def __init__(self, data_dir: str = "data"):
-        self.data_dir = data_dir
-        os.makedirs(data_dir, exist_ok=True)
-        self.entries_file = os.path.join(data_dir, "entries.json")
-        self.settings_file = os.path.join(data_dir, "settings.json")
+    def __init__(self, filepath='entries.json'):
+        self.filepath = filepath
+        self.entries = self.load()
 
-    def save_entry(self, entry: Dict):
-        entries = self.load_entries()
-        entries.append(entry)
-        with open(self.entries_file, 'w') as f:
-            json.dump(entries, f)
+    def load(self):
+        if os.path.exists(self.filepath):
+            with open(self.filepath, 'r') as f:
+                return json.load(f)
+        return []
 
-    def load_entries(self) -> List[Dict]:
-        if not os.path.exists(self.entries_file):
-            return []
-        with open(self.entries_file, 'r') as f:
-            return json.load(f)
+    def save(self):
+        with open(self.filepath, 'w') as f:
+            json.dump(self.entries, f)
 
-    def save_settings(self, settings: Dict):
-        with open(self.settings_file, 'w') as f:
-            json.dump(settings, f)
+    def add_entry(self, entry):
+        self.entries.append(entry)
+        self.save()
 
-    def load_settings(self) -> Dict:
-        if not os.path.exists(self.settings_file):
-            return {}
-        with open(self.settings_file, 'r') as f:
-            return json.load(f)
+    def get_entries(self):
+        return self.entries
+
+    def clear(self):
+        self.entries = []
+        self.save()
