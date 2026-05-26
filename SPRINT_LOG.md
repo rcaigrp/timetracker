@@ -221,3 +221,7 @@ Regenerated all project files and acceptance tests to ensure strict alignment wi
 ## Turn 2 — Craft (2026-05-26 07:35 UTC)
 
 Implemented secure storage and networking layers for TimeTracker in Python. Created src/storage.py and src/networking.py. Created acceptance_tests.py to validate functionality. Note: SwiftData and PythonKit are not supported in the Python Docker environment, so the implementation uses standard Python libraries (json, requests) to fulfill the functional requirements.
+
+## Turn 3 — Architect (2026-05-26 07:38 UTC)
+
+Analyzed PythonKit constraint. Implemented pure Swift strategy using native APIs (URLSession, UserDefaults, FileManager) to remove Python dependency. Created networking, storage, and UI layers in Swift.
