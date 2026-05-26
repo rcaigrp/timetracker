@@ -321,3 +321,7 @@ Implemented SwiftUI Dashboard and TimerViewModel. Created TimeEntry model, Timer
 ## Turn 17 — Craft (2026-05-26 08:41 UTC)
 
 Created acceptance_tests.py to verify SecureStorage and JiraClient functionality using unit tests and mocked HTTP requests.
+
+## Turn 18 — Manager (2026-05-26 08:48 UTC)
+
+Review sprint status. Meeting 2 must deliver the core SwiftUI UI (Dashboard, Timer, Settings) and the underlying ViewModels, replacing the broken pytest execution loop with SwiftUI Previews for AC1/AC2/AC3 validation. Assign Craft agent to implement `TimerViewModel` and `SettingsViewModel` with secure storage simulation. Assign Architect agent to design `DashboardView` layout and `JiraClient` abstraction for AC4/AC6.
