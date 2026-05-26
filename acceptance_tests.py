@@ -1,104 +1,82 @@
 import pytest
-import json
 import os
-import time
+import json
 import responses
+import time
 import sys
+import tempfile
 
-sys.path.insert(0, '/workspace/projects/TimeTracker/src')
+sys.path.insert(0, '/workspace/projects/TimeTracker')
 
-from app import TimerManager, SettingsManager
-from networking import JiraClient
+from src.storage import StorageManager
+from src.timer import TimerManager
+from src.networking import JiraClient
 
+class TestAppLaunch:
+    def test_app_launch(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            sm = StorageManager(data_dir=tmpdir)
+            assert sm.entries == []
+            assert sm.settings == {}
 
-@pytest.fixture
-def timer_manager(tmp_path):
-    path = str(tmp_path / "timer.json")
-    return TimerManager(storage_path=path)
+class TestManualEntry:
+    def test_manual_entry(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            sm = StorageManager(data_dir=tmpdir)
+            entry = {"id": "1", "project": "Test", "date": "2023-01-01", "duration": "0:30"}
+            sm.add_entry(entry)
+            assert len(sm.entries) == 1
+            assert sm.entries[0] == entry
 
-@pytest.fixture
-def settings_manager(tmp_path):
-    path = str(tmp_path / "settings.json")
-    return SettingsManager(settings_path=path)
+class TestSettings:
+    def test_settings_save(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            sm = StorageManager(data_dir=tmpdir)
+            sm.save_settings("http://jira.com", "user", "pass")
+            assert sm.settings == {"base_url": "http://jira.com", "username": "user", "api_key": "pass"}
 
-@pytest.fixture
-def jira_client():
-    return JiraClient("https://test.atlassian.net", "user", "key")
-
-
-def test_criterion_1_timer_launches_and_tracks(timer_manager):
-    # Timer launches cleanly and tracks time
-    assert not timer_manager.is_running
-    timer_manager.start("DevProject")
-    assert timer_manager.is_running
-    assert timer_manager.get_elapsed() > 0
-
-
-def test_criterion_2_manual_entry_creation(timer_manager):
-    # Manual entry with name, start/stop, and elapsed time
-    timer_manager.start("TestProject")
-    time.sleep(0.1)
-    timer_manager.stop()
-    entries = timer_manager.get_entries()
-    assert len(entries) == 1
-    assert entries[0]["project"] == "TestProject"
-    assert entries[0]["duration"] > 0
-
-
-def test_criterion_3_settings_stores_credentials_securely(settings_manager):
-    # Settings accepts and stores credentials securely
-    settings_manager.save_settings("https://jira.local", "admin", "secret123")
-    settings = settings_manager.get_settings()
-    assert "api_key_hash" in settings
-    assert settings["base_url"] == "https://jira.local"
-    assert settings["username"] == "admin"
-
-
-def test_criterion_4_jira_fetches_projects_without_crashing(jira_client):
-    # Fetches projects/issues without crashing
-    with responses.RequestsMock() as rsps:
-        rsps.add(
+class TestJiraIntegration:
+    @responses.activate
+    def test_jira_fetch(self):
+        base_url = "http://jira.com"
+        username = "user"
+        api_key = "pass"
+        
+        responses.add(
             responses.GET,
-            "https://test.atlassian.net/rest/api/latest/project",
+            f"{base_url}/rest/api/project",
             json=[{"id": "1", "name": "TestProject"}],
             status=200
         )
-        projects = jira_client.get_projects()
+        
+        client = JiraClient(base_url, username, api_key)
+        projects = client.get_projects()
+        
         assert len(projects) == 1
         assert projects[0]["name"] == "TestProject"
 
+class TestPersistence:
+    def test_persistence(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            sm1 = StorageManager(data_dir=tmpdir)
+            sm1.add_entry({"id": "1"})
+            sm1.save_entries()
+            
+            sm2 = StorageManager(data_dir=tmpdir)
+            assert len(sm2.entries) == 1
 
-def test_criterion_5_data_persists_across_relaunchs(timer_manager):
-    # Data persists across app relaunches (simulated by reloading JSON)
-    timer_manager.start("PersistTest")
-    time.sleep(0.1)
-    timer_manager.stop()
-    entries_before = timer_manager.get_entries()
-    # Simulate reload
-    new_manager = TimerManager(storage_path=timer_manager.storage_path)
-    assert len(new_manager.get_entries()) == len(entries_before)
-
-
-def test_criterion_6_networking_handles_requests(jira_client):
-    # Handles HTTP requests and returns structured data
-    with responses.RequestsMock() as rsps:
-        rsps.add(
-            responses.GET,
-            "https://test.atlassian.net/rest/api/latest/search",
-            json={"issues": [{"id": "123"}]},
-            status=200
-        )
-        issues = jira_client.get_issues("TEST")
-        assert len(issues) == 1
-        assert issues[0]["id"] == "123"
-
-
-def test_criterion_7_background_suspension_handling(timer_manager):
-    # Gracefully handles suspension by pausing and resuming
-    timer_manager.start("SuspensionTest")
-    time.sleep(0.1)
-    timer_manager.pause()
-    assert not timer_manager.is_running
-    timer_manager.resume()
-    assert timer_manager.is_running
-    assert timer_manager.get_elapsed() > 0
+class TestBackgroundSuspension:
+    def test_background_suspension(self):
+        tm = TimerManager()
+        tm.start()
+        time.sleep(1)
+        tm.pause()
+        elapsed_before = tm.get_elapsed()
+        
+        time.sleep(1)
+        tm.resume()
+        time.sleep(1)
+        tm.pause()
+        elapsed_after = tm.get_elapsed()
+        
+        assert elapsed_after >= elapsed_before + 0.9

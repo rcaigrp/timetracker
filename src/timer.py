@@ -1,34 +1,34 @@
 import time
-from datetime import datetime
 
-class Timer:
+class TimerManager:
     def __init__(self):
-        self.start_time = None
-        self.elapsed = 0
         self.is_running = False
+        self.start_time = None
+        self.accumulated_time = 0
 
     def start(self):
-        self.start_time = datetime.now()
         self.is_running = True
-
-    def stop(self):
-        if self.is_running:
-            self.elapsed += int((datetime.now() - self.start_time).total_seconds())
-            self.start_time = None
-            self.is_running = False
+        self.start_time = time.time()
+        self.accumulated_time = 0
 
     def pause(self):
         if self.is_running:
-            self.elapsed += int((datetime.now() - self.start_time).total_seconds())
-            self.start_time = None
+            self.accumulated_time += time.time() - self.start_time
             self.is_running = False
+            self.start_time = None
+
+    def stop(self):
+        if self.is_running:
+            self.accumulated_time += time.time() - self.start_time
+            self.is_running = False
+            self.start_time = None
 
     def resume(self):
         if not self.is_running:
-            self.start_time = datetime.now()
+            self.start_time = time.time()
             self.is_running = True
 
-    def get_elapsed(self) -> int:
+    def get_elapsed(self):
         if self.is_running:
-            return self.elapsed + int((datetime.now() - self.start_time).total_seconds())
-        return self.elapsed
+            return self.accumulated_time + (time.time() - self.start_time)
+        return self.accumulated_time
