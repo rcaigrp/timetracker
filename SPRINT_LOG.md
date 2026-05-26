@@ -35,3 +35,7 @@ Finalizing LocalTrack. Creating acceptance_tests.py to formally verify all 6 acc
 ## Turn 9 — Steward (2026-05-26 05:23 UTC)
 
 Performed final file hygiene check and ran acceptance tests. Verified manifest permissions, scanned JS files for network requests, confirmed all core extension files are present and clean, and validated project structure.
+
+## Turn 10 — Craft (2026-05-26 05:25 UTC)
+
+Created acceptance_tests.py to validate all 6 acceptance criteria via static analysis of extension files. Added docker command to remove spurious src/ directory causing lint errors and run tests.
