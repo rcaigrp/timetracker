@@ -1,42 +1,17 @@
-import SwiftData
+// StorageManager.swift
 import Foundation
-
-@Model
-final class TimeEntry: Identifiable {
-    @Attribute(.nonMigrationable) var id: UUID
-    var project: String
-    var startTime: Date
-    var endTime: Date?
-    var duration: TimeInterval
-    var notes: String?
-    
-    init(project: String, startTime: Date, duration: TimeInterval, notes: String? = nil) {
-        self.id = UUID()
-        self.project = project
-        self.startTime = startTime
-        self.duration = duration
-        self.notes = notes
-    }
-}
+import SwiftData
 
 class StorageManager {
     static let shared = StorageManager()
-    private let container: NSPersistentContainer
-
-    init() {
-        self.container = NSPersistentContainer(name: "TimeTracker")
-        self.container.loadPersistentStores { _, error in
-            if let error = error {
-                print("Failed to load persistent stores: \(error)")
-            }
-        }
+    private init() {}
+    
+    func save<T: PersistentModel>(_ item: T) {
+        // Implementation for saving items
     }
-
-    func save(entry: TimeEntry) {
-        // Implementation in SwiftData context
-    }
-
-    func fetchEntries() -> [TimeEntry] {
+    
+    func fetch<T: PersistentModel>(type: T.Type) -> [T] {
+        // Implementation for fetching items
         return []
     }
 }
