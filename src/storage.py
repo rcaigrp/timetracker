@@ -1,39 +1,21 @@
 import json
 import os
 
-class Storage:
-    def __init__(self):
-        self.data = {}
-        self.load()
+class TimerStorage:
+    def __init__(self, db_path="timer_data.json"):
+        self.db_path = db_path
+        self.data = self._load()
 
-    def load(self):
-        if os.path.exists('timer_data.json'):
-            with open('timer_data.json', 'r') as f:
-                self.data = json.load(f)
-
-    def save(self):
-        with open('timer_data.json', 'w') as f:
-            json.dump(self.data, f)
-
-    def get_timer_state(self):
-        return self.data.get('timer_state')
-
-    def set_timer_state(self, state):
-        self.data['timer_state'] = state
-        self.save()
-
-    def get_entries(self):
-        return self.data.get('entries', [])
-
-    def set_entries(self, entries):
-        self.data['entries'] = entries
-        self.save()
+    def _load(self):
+        if os.path.exists(self.db_path):
+            with open(self.db_path, 'r') as f:
+                return json.load(f)
+        return []
 
     def save_entry(self, entry):
-        entries = self.get_entries()
-        entries.append(entry)
-        self.set_entries(entries)
+        self.data.append(entry)
+        self._save()
 
-    def save_settings(self, settings):
-        self.data['settings'] = settings
-        self.save()
+    def _save(self):
+        with open(self.db_path, 'w') as f:
+            json.dump(self.data, f)

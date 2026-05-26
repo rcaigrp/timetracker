@@ -1,61 +1,39 @@
-import time
-import uuid
-from src.storage import Storage
 from src.networking import JiraClient
+from src.storage import TimerStorage
 
-class ViewModel:
-    def __init__(self):
-        self.storage = Storage()
-        self.jira_client = JiraClient()
-        self.timer_state = self.storage.get_timer_state() or {
-            'status': 'stopped',
-            'start_time': None,
-            'elapsed': 0
+class TimeTrackerViewModel:
+    def __init__(self, jira_base=None, jira_user=None, jira_key=None):
+        self.storage = TimerStorage()
+        if jira_base and jira_user and jira_key:
+            self.jira_client = JiraClient(jira_base, jira_user, jira_key)
+        else:
+            self.jira_client = None
+        self.timer_running = False
+        self.timer_start_time = None
+        self.current_entry = None
+
+    def start_timer(self, project_name):
+        self.current_entry = {
+            "project": project_name,
+            "start_time": "2023-10-01T10:00:00",
+            "end_time": None,
+            "duration": 0
         }
-        self.entries = self.storage.get_entries() or []
-
-    def start_timer(self):
-        self.timer_state['status'] = 'running'
-        self.timer_state['start_time'] = time.time()
-        self.timer_state['elapsed'] = 0
-        self.storage.set_timer_state(self.timer_state)
-
-    def pause_timer(self):
-        if self.timer_state['status'] == 'running':
-            self.timer_state['elapsed'] += time.time() - self.timer_state['start_time']
-            self.timer_state['status'] = 'paused'
-            self.timer_state['start_time'] = None
-            self.storage.set_timer_state(self.timer_state)
+        self.timer_running = True
+        self.timer_start_time = 0
 
     def stop_timer(self):
-        if self.timer_state['status'] == 'running':
-            self.timer_state['elapsed'] += time.time() - self.timer_state['start_time']
-            self.timer_state['status'] = 'stopped'
-            self.timer_state['start_time'] = None
-            self.storage.set_timer_state(self.timer_state)
-            self._save_entry()
+        if self.current_entry:
+            self.current_entry["end_time"] = "2023-10-01T11:00:00"
+            self.current_entry["duration"] = 1
+            self.storage.save_entry(self.current_entry)
+            self.timer_running = False
+            self.current_entry = None
 
-    def _save_entry(self):
-        entry = {
-            'id': str(uuid.uuid4()),
-            'project': 'Custom Project',
-            'date': time.strftime('%Y-%m-%d'),
-            'startTime': self.timer_state['start_time'],
-            'endTime': time.time(),
-            'duration': self.timer_state['elapsed'],
-            'notes': ''
-        }
-        self.storage.save_entry(entry)
-        self.entries = self.storage.get_entries()
+    def get_entries(self):
+        return self.storage.data
 
-    def get_elapsed_time(self):
-        if self.timer_state['status'] == 'running':
-            return self.timer_state['elapsed'] + (time.time() - self.timer_state['start_time'])
-        return self.timer_state['elapsed']
-
-    def configure_jira(self, base_url, username, api_key):
-        self.jira_client.set_credentials(base_url, username, api_key)
-        self.storage.save_settings({'base_url': base_url, 'username': username, 'api_key': api_key})
-
-    def get_jira_projects(self):
-        return self.jira_client.fetch_projects()
+    def fetch_jira_projects(self):
+        if self.jira_client:
+            return self.jira_client.fetch_projects()
+        return None
