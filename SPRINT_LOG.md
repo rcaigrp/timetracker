@@ -297,3 +297,7 @@ Implementing the complete LocalTrack browser extension files (manifest, HTML, JS
 ## Turn 11 — Manager (2026-05-26 08:18 UTC)
 
 Created all project files including manifest, HTML, JS, CSS, and acceptance tests. The acceptance tests validate file structure, required dependencies, and absence of network requests.
+
+## Turn 12 — Craft (2026-05-26 08:20 UTC)
+
+Created iOS SwiftUI views (App.swift, DashboardView.swift, TimerView.swift, SettingsView.swift) and PythonKit integration modules (src/networking.py, src/storage.py) as per README architecture. TimerView implements start/pause/stop with elapsed time tracking. SettingsView collects Jira credentials. Python modules provide the networking and local storage abstractions intended for Swift/PythonKit bridging. Files are ready for integration into the Xcode project.

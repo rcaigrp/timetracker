@@ -1,12 +1,14 @@
-class JiraAPI:
-    '''Placeholder for Jira API integration.
-    Not used in the offline browser extension but included per task request.'''
-    def __init__(self, base_url, username, api_key):
+class NetworkManager:
+    """Abstract networking layer intended for PythonKit integration."""
+    def __init__(self, base_url: str, username: str, api_key: str):
         self.base_url = base_url
         self.username = username
         self.api_key = api_key
-        self._projects = []
 
-    def fetch_projects(self):
-        # Mock response for testing
+    def fetch_issues(self) -> list:
+        # Placeholder for PythonKit/URLSession bridge
+        return []
+
+    def fetch_projects(self) -> list:
+        # Placeholder for PythonKit/URLSession bridge
         return []
