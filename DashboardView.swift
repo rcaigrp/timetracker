@@ -1,31 +1,54 @@
 import SwiftUI
-import SwiftData
 
 struct DashboardView: View {
-    @StateObject var viewModel: TimerViewModel
+    @StateObject var viewModel: TimeTrackerViewModel
     
     var body: some View {
-        VStack {
-            TimerDisplayView(viewModel: viewModel)
-            EntryListView(viewModel: viewModel)
+        NavigationView {
+            ScrollView {
+                VStack {
+                    // Timer Display
+                    TimerDisplay(seconds: viewModel.elapsedSeconds, isRunning: viewModel.isRunning)
+                    
+                    // Controls
+                    HStack {
+                        Button("Start") { viewModel.startTimer() }
+                        Button("Pause") { viewModel.pauseTimer() }
+                        Button("Stop") { viewModel.stopTimer() }
+                    }
+                    
+                    // Recent Entries
+                    EntryList(entries: viewModel.entries)
+                    
+                    // Settings Link
+                    NavigationLink("Settings") {
+                        SettingsView()
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("TimeTracker")
         }
     }
 }
 
-struct TimerDisplayView: View {
-    @ObservedObject var viewModel: TimerViewModel
+struct TimerDisplay: View {
+    let seconds: Int
+    let isRunning: Bool
     
     var body: some View {
-        Text(viewModel.isRunning ? "Timer Running" : "Timer Stopped")
+        Text("\(seconds / 60):\(String(format: "%02d", seconds % 60))")
+            .font(.largeTitle)
+            .foregroundColor(isRunning ? .green : .gray)
     }
 }
 
-struct EntryListView: View {
-    @ObservedObject var viewModel: TimerViewModel
+struct EntryList: View {
+    let entries: [TimeEntry]
     
     var body: some View {
-        List(viewModel.entries) { entry in
-            Text(entry.projectName)
+        List(entries) { entry in
+            Text(entry.project)
         }
     }
 }
