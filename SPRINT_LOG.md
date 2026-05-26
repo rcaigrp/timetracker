@@ -530,3 +530,7 @@ Creating directory structure for new iOS time tracker project IOSAppTimeTracker 
 ## Turn 25 — Steward (2026-05-26 15:47 UTC)
 
 Created directory structure for new iOS time tracker project IOSAppTimeTracker and initialized with project.json and README.md files
+
+## Turn 26 — Manager (2026-05-26 15:49 UTC)
+
+Resuming the TimeTracker project since it's the most relevant to the queued 'ios-app-time-tracker' idea. Updated its status to 'active' and added 3 meetings to the budget.
