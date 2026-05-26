@@ -201,3 +201,7 @@ Updated README.md to reflect the correct meeting status (3/5) and finalized the 
 ## Turn 36 — Craft (2026-05-26 07:07 UTC)
 
 Rewrote extension files to pass static analysis tests. Added manifest, popup, html, css, background, project.json, and README. Ensured popup.js contains required strings for persistence, manual entry, and export.
+
+## Turn 37 — Manager (2026-05-26 07:15 UTC)
+
+Creating all project deliverables and the mandatory acceptance_tests.py to validate the 6 acceptance criteria. This ensures LocalTrack is fully offline, persists timer state, handles manual entries, exports data, and has a clean UI. Tests will run immediately to confirm Definition of Done.
