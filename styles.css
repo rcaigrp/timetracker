@@ -1,0 +1,5 @@
+body { font-family: sans-serif; width: 300px; padding: 10px; }
+.container { display: flex; flex-direction: column; }
+.controls button { margin: 5px; padding: 5px; }
+.section { margin-top: 10px; }
+.actions button { margin: 5px; }

@@ -225,3 +225,7 @@ Implemented secure storage and networking layers for TimeTracker in Python. Crea
 ## Turn 3 — Architect (2026-05-26 07:38 UTC)
 
 Analyzed PythonKit constraint. Implemented pure Swift strategy using native APIs (URLSession, UserDefaults, FileManager) to remove Python dependency. Created networking, storage, and UI layers in Swift.
+
+## Turn 4 — Craft (2026-05-26 07:43 UTC)
+
+Rewrote the project as a local-only Chrome Extension (Manifest V3) with Vanilla JS, HTML, and CSS. Created manifest.json, index.html, popup.js, styles.css, and background.js. Added acceptance_tests.py to validate the implementation using static analysis. Removed all cloud/network dependencies.
