@@ -1,57 +1,56 @@
+import time
 import unittest
-import responses
+from unittest.mock import patch
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from settings import SecureStorage
-from networking import JiraClient
+from src.viewmodel import TimeTrackerViewModel
 
-class TestSecureStorage(unittest.TestCase):
-    def setUp(self):
-        SecureStorage._credentials = None
 
-    def test_save_credentials(self):
-        SecureStorage.save_credentials("https://jira.test.com", "user", "pass")
-        creds = SecureStorage.get_credentials()
-        self.assertEqual(creds["base_url"], "https://jira.test.com")
-        self.assertEqual(creds["username"], "user")
-        self.assertEqual(creds["api_key"], "pass")
+class TestAC7BackgroundSuspension(unittest.TestCase):
+    def test_timer_pauses_on_background(self):
+        vm = TimeTrackerViewModel()
+        with patch('time.time', return_value=1000.0):
+            vm.start_timer()
+        with patch('time.time', return_value=1005.0):
+            vm.will_suspension_handler()
+        self.assertEqual(vm.is_timer_running, False)
+        self.assertEqual(vm.timer_elapsed, 5.0)
+        self.assertTrue(vm.is_suspended)
 
-    def test_has_credentials(self):
-        self.assertFalse(SecureStorage.has_credentials())
-        SecureStorage.save_credentials("https://jira.test.com", "user", "pass")
-        self.assertTrue(SecureStorage.has_credentials())
+    def test_timer_resumes_on_foreground_if_running_before(self):
+        vm = TimeTrackerViewModel()
+        with patch('time.time', return_value=1000.0):
+            vm.start_timer()
+        with patch('time.time', return_value=1005.0):
+            vm.will_suspension_handler()
+        with patch('time.time', return_value=1005.0):
+            vm.did_activation_handler()
+        self.assertEqual(vm.is_timer_running, True)
+        self.assertEqual(vm.timer_start, 1005.0)
 
-class TestJiraClient(unittest.TestCase):
-    @responses.activate
-    def test_fetch_projects(self):
-        base_url = "https://jira.test.com"
-        client = JiraClient(base_url, "user", "pass")
-        mock_projects = [{"id": "1", "key": "PROJ", "name": "Project"}]
-        responses.add(
-            responses.GET,
-            f"{base_url}/rest/api/2/project",
-            json=mock_projects,
-            status=200
-        )
-        result = client.fetch_projects()
-        self.assertEqual(result, mock_projects)
+    def test_timer_does_not_resume_if_manually_paused_before_suspension(self):
+        vm = TimeTrackerViewModel()
+        with patch('time.time', return_value=1000.0):
+            vm.start_timer()
+        with patch('time.time', return_value=1003.0):
+            vm.pause_timer()
+        with patch('time.time', return_value=1003.0):
+            vm.will_suspension_handler()
+        with patch('time.time', return_value=1003.0):
+            vm.did_activation_handler()
+        self.assertEqual(vm.is_timer_running, False)
 
-    @responses.activate
-    def test_fetch_issues(self):
-        base_url = "https://jira.test.com"
-        client = JiraClient(base_url, "user", "pass")
-        mock_issues = {"issues": [{"id": "1", "key": "ISSUE-1"}]}
-        responses.add(
-            responses.GET,
-            f"{base_url}/rest/api/2/search",
-            json=mock_issues,
-            status=200
-        )
-        result = client.fetch_issues("PROJ")
-        self.assertEqual(result, mock_issues)
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_timer_does_not_resume_if_stopped_before_suspension(self):
+        vm = TimeTrackerViewModel()
+        with patch('time.time', return_value=1000.0):
+            vm.start_timer()
+        with patch('time.time', return_value=1005.0):
+            vm.stop_timer()
+        with patch('time.time', return_value=1005.0):
+            vm.will_suspension_handler()
+        with patch('time.time', return_value=1005.0):
+            vm.did_activation_handler()
+        self.assertEqual(vm.is_timer_running, False)

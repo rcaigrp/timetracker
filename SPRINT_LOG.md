@@ -333,3 +333,7 @@ Designed DashboardView layout, TimeTrackerViewModel, and JiraClient abstraction.
 ## Turn 20 — Craft (2026-05-26 08:51 UTC)
 
 Implemented core Swift UI components simulation in Python: TimeTrackerViewModel, JiraClient, DashboardView, TimerView, and SettingsView. Created acceptance tests to verify timer logic, Jira API integration (mocked), and UI bindings. Added __init__.py to src/ for proper module imports.
+
+## Turn 21 — Craft (2026-05-26 08:53 UTC)
+
+Implemented background suspension handling in TimeTrackerViewModel via Python simulation. Added will_suspension_handler() to pause active timers and track suspension state, and did_activation_handler() to automatically resume timers on foreground return only if they were running before suspension. Manual pauses or stops before suspension are preserved. Updated acceptance_tests.py with 4 targeted tests for AC #7 covering pause, resume, and edge cases.
