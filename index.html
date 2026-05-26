@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <title>LocalTrack</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -9,33 +9,16 @@
   <div class="container">
     <h1>LocalTrack</h1>
     <div id="timer-display">00:00:00</div>
-    <div class="controls">
-      <button id="start">Start</button>
-      <button id="pause">Pause</button>
-      <button id="resume">Resume</button>
-      <button id="stop">Stop</button>
-    </div>
-    <div class="section">
+    <button id="start-btn">Start</button>
+    <button id="stop-btn" disabled>Stop</button>
+    <div class="manual-entry">
       <h2>Manual Entry</h2>
-      <form id="manual-entry">
-        <label>Project: <input type="text" id="project" required></label>
-        <label>Date: <input type="date" id="date" required></label>
-        <label>Hours: <input type="number" id="hours" min="0" step="0.5"></label>
-        <label>Min: <input type="number" id="minutes" min="0" max="59"></label>
-        <label>Notes: <textarea id="notes"></textarea></label>
-        <button type="submit">Save Entry</button>
-      </form>
+      <input type="text" id="project-name" placeholder="Project Name">
+      <input type="text" id="notes" placeholder="Notes">
+      <button id="add-entry-btn">Add Entry</button>
     </div>
-    <div class="section">
-      <h2>Entries</h2>
-      <div id="entries-list"></div>
-      <div class="actions">
-        <button id="export-json">Export JSON</button>
-        <button id="export-csv">Export CSV</button>
-        <button id="clear">Clear All</button>
-      </div>
-    </div>
-    <div class="summary">Today's Total: <span id="today-total">0h</span></div>
+    <button id="export-btn">Export Data</button>
+    <ul id="entries-list"></ul>
   </div>
   <script src="popup.js"></script>
 </body>

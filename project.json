@@ -1,13 +1,12 @@
 {
-  "goal": "Build a native iOS application that enables users to track time spent on development projects through both manual entries and seamless Jira integration via configured API endpoints.",
+  "goal": "Build a privacy-first, local-only Browser Extension called 'LocalTrack' for tracking project time. The extension must operate entirely offline with zero cloud dependency, accounts, or telemetry.",
   "acceptance_criteria": [
-    "The application launches cleanly on a simulator and presents a main dashboard with a working timer and project list.",
-    "Users can manually create a custom project entry with a name, start and stop the timer, and view elapsed time in a persisted list.",
-    "The Settings screen accepts a Jira base URL, username, and API key, stores them securely, and requires them for all API operations.",
-    "Upon successful Jira configuration, the app fetches and displays a list of projects or issues from the Jira instance without crashing.",
-    "All timer data and project entries persist across app relaunches and device reboots.",
-    "The networking layer successfully handles HTTP requests and responses using the configured credentials, returning structured data that populates the UI.",
-    "The application gracefully handles iOS background suspension by pausing the timer and resuming correctly upon foreground return."
+    "Extension installs and launches without errors.",
+    "Timer persists across popup close/open.",
+    "Manual entries save and retrieve correctly from local storage.",
+    "Export generates valid files with correct data.",
+    "No network requests; all logic is client-side.",
+    "UI is responsive and clean."
   ],
   "meeting_budget": 5,
   "meetings_held": 1,
