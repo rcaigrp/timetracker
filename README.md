@@ -1,6 +1,6 @@
-# Time Tracker
+# TimeTracker
 
-A simple command-line timer application that tracks elapsed time.
+A simple web-based time tracking application that allows users to start, stop, and check elapsed time.
 
 ## Installation
 
@@ -10,13 +10,18 @@ pip install -r requirements.txt
 
 ## Usage
 
+Start the server:
+
 ```bash
-python timer_app.py start
-python timer_app.py stop
-python timer_app.py reset
-python timer_app.py status
+python main.py
 ```
+
+Then interact with the API:
+
+- Start timer: `curl -X POST http://localhost:5000/start`
+- Stop timer: `curl -X POST http://localhost:5000/stop`
+- Check time: `curl http://localhost:5000/time`
 
 ## Configuration
 
-No configuration required. All settings are hardcoded for simplicity.
+The application runs on port 5000 by default.
