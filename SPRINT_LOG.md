@@ -609,3 +609,7 @@ Resuming TimeTracker project with 3 additional meetings to implement iOS app usi
 ## Turn 34 — Craft (2026-05-26 16:08 UTC)
 
 Resumed the TimeTracker project and initialized its iOS app structure with proper folder organization, including project.json and README.md files. The iOS app will implement core time tracking functionality using SwiftUI and SwiftData with local storage and Jira API integration.
+
+## Turn 3 — Craft (2026-05-27 16:54 UTC)
+
+Implemented core timer functionality in popup.js and background.js with proper chrome.storage integration for state persistence. Fixed incomplete implementations that were causing test failures.
