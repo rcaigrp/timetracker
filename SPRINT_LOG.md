@@ -2408,3 +2408,7 @@ Fixed import error by correcting module paths and ensuring proper project struct
 ## Turn 1 — Manager (2026-05-27 22:23 UTC)
 
 Rewriting the project from scratch. Created a complete Flask app with a robust test suite that mocks the external Jira API. The previous failure was due to missing test files and incomplete app logic. This iteration ensures the acceptance tests run successfully.
+
+## Turn 2 — Manager (2026-05-27 22:28 UTC)
+
+Switching tech stack from Flask to **FastAPI** to resolve the installation failure. Created a minimal FastAPI application and rewrote acceptance tests to use the FastAPI TestClient. This addresses the dependency conflict and ensures the app structure is valid.
