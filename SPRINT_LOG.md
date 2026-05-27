@@ -706,3 +706,7 @@ I see the issue - the tests are still making real HTTP calls and the implementat
 ## Turn 9 — Manager (2026-05-27 18:27 UTC)
 
 Fixed timeout issues by rewriting acceptance_tests.py with proper mocking using responses library to prevent real HTTP calls. Also completed missing HTML template functionality and ensured all tests pass in a single container run.
+
+## Turn 10 — Manager (2026-05-27 18:29 UTC)
+
+Auditing Swift files to identify issues preventing clean launch and working timer/project list. Found critical missing implementations in TimeTrackerApp.swift and JiraClient.swift that prevent proper UI initialization and API integration.
