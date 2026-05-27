@@ -1,19 +1,30 @@
-# Time Tracker
+# TimeTracker
 
-Tracks time spent on tasks with start and stop functionality.
+A simple CLI time tracking tool that records project durations.
 
 ## Installation
 
 ```bash
-swift build
+pip install -r requirements.txt
 ```
 
 ## Usage
 
+Start tracking a project:
 ```bash
-swift run
+time_tracker start ProjectName
+```
+
+Stop tracking:
+```bash
+time_tracker stop
+```
+
+List all projects:
+```bash
+time_tracker list
 ```
 
 ## Configuration
 
-No configuration required.
+The tool stores data in time_entries.json in the current directory.

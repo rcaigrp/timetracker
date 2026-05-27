@@ -3,17 +3,16 @@ import PackageDescription
 
 let package = Package(
     name: "TimeTracker",
-    platforms: [
-        .macOS(.v13)
-    ],
     products: [
-        .executable(name: "TimeTracker", targets: ["TimeTracker"])
+        .executable(name: "TimeTracker", targets: ["TimeTracker"]),
+    ],
+    dependencies: [
+        // No external dependencies needed for basic functionality
     ],
     targets: [
-        .executableTarget(
+        .target(
             name: "TimeTracker",
-            dependencies: [],
-            path: "Sources/TimeTracker"
+            dependencies: []
         )
     ]
 )
