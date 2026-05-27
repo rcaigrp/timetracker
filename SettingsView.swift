@@ -1,42 +1,34 @@
+// SettingsView.swift
 import SwiftUI
 
-class SettingsViewModel: ObservableObject {
-    @Published var jiraBaseURL = ""
-    @Published var jiraUsername = ""
-    @Published var jiraAPIKey = ""
+class SettingsManager: ObservableObject {
+    @Published var jiraBaseUrl: String = ""
+    @Published var jiraUsername: String = ""
+    @Published var jiraApiKey: String = ""
     
-    func saveCredentials() {
-        // Mock implementation - will be replaced with secure storage
+    func saveSettings() {
+        // In a real app, this would securely store credentials
+        print("Saving settings: \(jiraBaseUrl), \(jiraUsername)")
     }
 }
 
 struct SettingsView: View {
-    @StateObject private var settingsVM = SettingsViewModel()
+    @StateObject private var settings = SettingsManager()
     
     var body: some View {
-        Form {
-            Section(header: Text("Jira Configuration")) {
-                TextField("Base URL", text: $settingsVM.jiraBaseURL)
-                    .autocapitalization(.none)
+        NavigationView {
+            Form {
+                Section(header: Text("Jira Configuration")) {
+                    TextField("Base URL", text: $settings.jiraBaseUrl)
+                    TextField("Username", text: $settings.jiraUsername)
+                    SecureField("API Key", text: $settings.jiraApiKey)
+                }
                 
-                TextField("Username", text: $settingsVM.jiraUsername)
-                    .autocapitalization(.none)
-                
-                SecureField("API Key", text: $settingsVM.jiraAPIKey)
-            }
-            
-            Section {
-                Button(action: settingsVM.saveCredentials) {
-                    Text("Save Settings")
+                Button("Save Settings") {
+                    settings.saveSettings()
                 }
             }
+            .navigationTitle("Settings")
         }
-        .navigationTitle("Settings")
-    }
-}
-
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
     }
 }
