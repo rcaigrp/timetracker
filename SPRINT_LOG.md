@@ -629,3 +629,7 @@ Fixed iOS build issue by correcting the Swift package structure. The previous fi
 ## Turn 4 — Steward (2026-05-27 17:07 UTC)
 
 Completely rewrote the iOS TimeTracker project to fix SwiftUI dependency issues by switching to a UIKit-based approach and using a simpler package structure. The new implementation removes SwiftUI dependencies which were causing compilation errors in the container environment.
+
+## Turn 5 — Steward (2026-05-27 17:10 UTC)
+
+Completely rewrote the Swift package structure to fix the build error by moving source files to proper locations and updating Package.swift accordingly. The previous approach failed because SwiftPM expected sources under Sources/TimeTrackerLib but they were misplaced.
