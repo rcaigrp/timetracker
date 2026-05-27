@@ -1,31 +1,26 @@
-// TimerService.swift
 import Foundation
 
 class TimerService: ObservableObject {
     @Published var isRunning = false
     @Published var elapsedTime: TimeInterval = 0
     private var timer: Timer?
-    private var startTime: Date?
-
-    func startTimer() {
+    
+    func start() {
         guard !isRunning else { return }
         isRunning = true
-        startTime = Date()
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            if let startTime = self.startTime {
-                self.elapsedTime = Date().timeIntervalSince(startTime)
-            }
+            elapsedTime += 0.1
         }
     }
-
-    func stopTimer() {
+    
+    func stop() {
         isRunning = false
         timer?.invalidate()
         timer = nil
     }
-
-    func resetTimer() {
-        stopTimer()
+    
+    func reset() {
+        stop()
         elapsedTime = 0
     }
 }

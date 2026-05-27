@@ -1,21 +1,19 @@
-// swift-tools-version:5.7
+// swift-tools-version: 5.9
 import PackageDescription
 
 let package = Package(
     name: "TimeTracker",
     platforms: [
-        .iOS(.v14)
+        .macOS(.v13)
     ],
     products: [
         .executable(name: "TimeTracker", targets: ["TimeTracker"])
     ],
-    dependencies: [],
     targets: [
-        .target(
+        .executableTarget(
             name: "TimeTracker",
             dependencies: [],
-            path: ".",
-            exclude: ["Info.plist"]
+            path: "Sources/TimeTracker"
         )
     ]
 )
