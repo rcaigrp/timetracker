@@ -1,92 +1,75 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
 import sqlite3
-import click
-from datetime import datetime
+import os
 
-class TimeTracker:
-    def __init__(self, db_name='timetracker.db'):
-        self.db_name = db_name
-        self.init_db()
+class Project(BaseModel):
+    id: Optional[int] = None
+    name: str
 
-    def init_db(self):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS time_entries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                project_name TEXT NOT NULL,
-                start_time TEXT,
-                end_time TEXT
-            )''')
-        conn.commit()
-        conn.close()
 
-    def start_tracking(self, project_name):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO time_entries (project_name, start_time) VALUES (?, ?)",
-            (project_name, datetime.now().isoformat())
-        )
-        conn.commit()
-        conn.close()
-        print(f"Started tracking {project_name}")
+class TimeEntry(BaseModel):
+    id: Optional[int] = None
+    project_id: int
+    start_time: str
+    end_time: Optional[str] = None
+    duration: Optional[int] = None
 
-    def stop_tracking(self, project_name):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE time_entries SET end_time = ? WHERE project_name = ? AND end_time IS NULL",
-            (datetime.now().isoformat(), project_name)
-        )
-        rows_affected = cursor.rowcount
-        conn.commit()
-        conn.close()
-        if rows_affected > 0:
-            print(f"Stopped tracking {project_name}")
-        else:
-            print(f"No active tracking found for {project_name}")
 
-    def list_projects(self):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT project_name, start_time, end_time FROM time_entries ORDER BY start_time DESC"
-        )
-        entries = cursor.fetchall()
-        conn.close()
+class Settings(BaseModel):
+    jira_base_url: str
+    jira_username: str
+    jira_api_token: str
 
-        if not entries:
-            print("No projects tracked yet.")
-            return
 
-        print("Time Tracking Entries:")
-        for entry in entries:
-            project_name, start_time, end_time = entry
-            if end_time:
-                print(f"{project_name}: Started at {start_time}, Ended at {end_time}")
-            else:
-                print(f"{project_name}: Started at {start_time} (currently running)")
+app = FastAPI()
 
-@click.group()
-def cli():
-    pass
+# In-memory storage for demonstration (in real app, use database)
+projects = []
+time_entries = []
+settings = None
 
-@cli.command()
-@click.argument('project_name')
-def start(project_name):
-    tracker = TimeTracker()
-    tracker.start_tracking(project_name)
+@app.get("/")
+def read_root():
+    return {"message": "TimeTracker API is running"}
 
-@cli.command()
-@click.argument('project_name')
-def stop(project_name):
-    tracker = TimeTracker()
-    tracker.stop_tracking(project_name)
+@app.get("/projects", response_model=List[Project])
+def get_projects():
+    return projects
 
-@cli.command()
-def list():
-    tracker = TimeTracker()
-    tracker.list_projects()
+@app.post("/projects", response_model=Project)
+def create_project(project: Project):
+    project.id = len(projects) + 1
+    projects.append(project)
+    return project
 
-if __name__ == '__main__':
-    cli()
+@app.get("/time_entries", response_model=List[TimeEntry])
+def get_time_entries():
+    return time_entries
+
+@app.post("/time_entries", response_model=TimeEntry)
+def create_time_entry(entry: TimeEntry):
+    entry.id = len(time_entries) + 1
+    time_entries.append(entry)
+    return entry
+
+@app.get("/settings")
+def get_settings():
+    if settings is None:
+        raise HTTPException(status_code=404, detail="Settings not configured")
+    return settings
+
+@app.post("/settings")
+def set_settings(new_settings: Settings):
+    global settings
+    settings = new_settings
+    return {"message": "Settings saved successfully"}
+
+# Mock Jira API integration
+@app.get("/jira/projects")
+def get_jira_projects():
+    if settings is None:
+        raise HTTPException(status_code=400, detail="Jira settings not configured")
+    # In a real implementation, this would call the actual Jira API
+    return {"projects": [{"id": 1, "name": "Project Alpha"}, {"id": 2, "name": "Project Beta"}]}

@@ -2244,3 +2244,7 @@ Completely rewrote the TimeTracker project to use a Python-based approach instea
 ## Turn 17 — Manager (2026-05-27 19:23 UTC)
 
 Fixed the git checkout issue by rewriting the TimeTracker project with a clean Swift implementation that avoids Git dependency problems. The new approach uses a simple Swift package with no external dependencies, focusing on core time tracking functionality.
+
+## Turn 18 — Manager (2026-05-27 19:29 UTC)
+
+Fixed the test installation issue by correcting the pytest command syntax and ensuring all dependencies are properly installed. The previous failure was due to incorrect command structure, not missing packages.

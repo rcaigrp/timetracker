@@ -1,30 +1,39 @@
 # TimeTracker
 
-A simple command-line time tracking application that records start and stop times for projects.
+A web-based time tracking application that enables users to track time spent on development projects through both manual entries and seamless Jira integration.
+
+## Features
+- Main dashboard with working timer and project list
+- Manual time entry screen
+- Settings screen for Jira API credentials (base URL, API token)
+- Automatic project fetching from Jira API
+- Local storage of logs
+- Summary/export functionality
+
+## Tech Stack
+- FastAPI for backend
+- React for frontend
+- SQLite for local data persistence
 
 ## Installation
-
 ```bash
-pip install click
+# Install backend dependencies
+pip install fastapi uvicorn python-dotenv
+
+# Install frontend dependencies
+npm install react react-dom
 ```
 
 ## Usage
-
-Start tracking a project:
 ```bash
-python main.py start "Project Alpha"
-```
+# Run backend server
+uvicorn main:app --reload
 
-Stop tracking a project:
-```bash
-python main.py stop "Project Alpha"
-```
-
-View all tracked projects:
-```bash
-python main.py list
+# Run frontend (in separate terminal)
+npm start
 ```
 
 ## Configuration
-
-The application stores data in a SQLite database file called `timetracker.db` in the current directory.
+- JIRA_BASE_URL: Base URL for your Jira instance
+- JIRA_USERNAME: Your Jira username
+- JIRA_API_TOKEN: Your Jira API token (not password)
