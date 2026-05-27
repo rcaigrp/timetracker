@@ -1,10 +1,8 @@
 version: "Swift version 5.7.3 (swift-5.7.3-RELEASE)"
 options: "b654daa18972586b50661d2f14d2c0dc2918bc2226cde1a8777ba112db901d81"
-build_start_time: [1779914163, 199216842]
-build_end_time: [1779914165, 417509078]
+build_start_time: [1779914356, 961887836]
+build_end_time: [1779914363, 240573883]
 inputs:
-  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/JiraClient.swift": [1779914160, 790514945]
-  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/Project.swift": [1779914160, 791569232]
-  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TaskManager.swift": [1779914160, 789265155]
+  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/Project.swift": [1779914354, 425612449]
+  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TaskManager.swift": [1779914354, 424950599]
   "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift": [1779904011, 913662195]
-  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimerService.swift": [1779904011, 914268970]

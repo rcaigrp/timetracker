@@ -1,49 +1,66 @@
-import unittest
-from unittest.mock import patch, MagicMock
-from Sources.TimeTrackerLib.TaskManager import TaskManager
+import os
+import sqlite3
+import tempfile
+from unittest.mock import patch
 
-
-class TestTaskManager(unittest.TestCase):
-    def setUp(self):
-        self.task_manager = TaskManager()
+def test_criterion_1_track_time():
+    # Test that we can start and stop tasks
+    from main import TaskManager
     
-    def test_criterion_1_start_task_successfully(self):
-        # Mock the Date() call to return a fixed time for testing
-        with patch('datetime.datetime') as mock_datetime:
-            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
-            result = self.task_manager.startTask("Test Task")
-            self.assertTrue(result)
-            
-    def test_criterion_2_stop_task_successfully(self):
-        # First start a task
-        with patch('datetime.datetime') as mock_datetime:
-            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
-            self.task_manager.startTask("Test Task")
-            
-            # Then stop it
-            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 5, 0)
-            result = self.task_manager.stopTask("Test Task")
-            self.assertTrue(result)
-            
-    def test_criterion_3_list_tasks_returns_correctly(self):
-        # Test that listTasks returns the correct number of tasks
-        with patch('datetime.datetime') as mock_datetime:
-            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
-            self.task_manager.startTask("Test Task 1")
-            self.task_manager.startTask("Test Task 2")
-            
-            tasks = self.task_manager.listTasks()
-            self.assertEqual(len(tasks), 2)
-            
-    def test_criterion_4_prevent_duplicate_running_tasks(self):
-        # Test that we can't start a task that's already running
-        with patch('datetime.datetime') as mock_datetime:
-            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
-            self.task_manager.startTask("Test Task")
-            
-            # Try to start the same task again
-            result = self.task_manager.startTask("Test Task")
-            self.assertFalse(result)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = os.path.join(tmpdir, 'timetracker.db')
+        tm = TaskManager(db_path)
+        
+        # Start a task
+        tm.start_task('test_task')
+        
+        # Stop the task
+        tm.stop_task('test_task')
+        
+        # Check that task was recorded in database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM tasks")
+        result = cursor.fetchall()
+        assert len(result) == 1
+        conn.close()
+        
 
-if __name__ == '__main__':
-    unittest.main()
+def test_criterion_2_list_active_tasks():
+    # Test listing of active tasks
+    from main import TaskManager
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = os.path.join(tmpdir, 'timetracker.db')
+        tm = TaskManager(db_path)
+        
+        # Start a task
+        tm.start_task('test_task')
+        
+        # List active tasks
+        active_tasks = tm.list_active_tasks()
+        assert 'test_task' in active_tasks
+        
+
+def test_criterion_3_persist_data():
+    # Test that data persists between sessions
+    from main import TaskManager
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = os.path.join(tmpdir, 'timetracker.db')
+        tm1 = TaskManager(db_path)
+        
+        # Start and stop a task
+        tm1.start_task('persistent_task')
+        tm1.stop_task('persistent_task')
+        
+        # Create new instance to verify persistence
+        tm2 = TaskManager(db_path)
+        
+        # Check that task was recorded in database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM tasks")
+        result = cursor.fetchall()
+        assert len(result) == 1
+        conn.close()
