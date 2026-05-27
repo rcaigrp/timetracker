@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TimeTracker Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .project-list, .log-list { margin: 20px 0; }
+        .timer-control { margin: 10px 0; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>TimeTracker Dashboard</h1>
+    
+    <div class="timer-control">
+        <h2>Timer Controls</h2>
+        <form action="/timer/start" method="post">
+            <input type="hidden" name="project_id" value="1">
+            <button type="submit">Start Timer</button>
+        </form>
+        <form action="/timer/stop" method="post">
+            <input type="hidden" name="project_id" value="1">
+            <button type="submit">Stop Timer</button>
+        </form>
+    </div>
+    
+    <div class="project-list">
+        <h2>Projects</h2>
+        {% for project in projects %}
+        <div>
+            <strong>{{ project.name }}</strong>: {{ project.description }}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="log-list">
+        <h2>Logs</h2>
+        {% for log in logs %}
+        <div>
+            Project ID: {{ log.project_id }}, Duration: {{ log.duration }}s
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

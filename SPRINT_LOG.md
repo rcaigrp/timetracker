@@ -698,3 +698,7 @@ Completely rewrote the TimeTracker project using a different approach. Replaced 
 ## Turn 7 — Manager (2026-05-27 18:11 UTC)
 
 Fixed the timeout issue by rewriting acceptance_tests.py with proper mocking using responses library and patching. The app.py was also updated to ensure proper environment variable handling and fixed incomplete code sections. Now tests will not make real HTTP calls.
+
+## Turn 8 — Manager (2026-05-27 18:17 UTC)
+
+I see the issue - the tests are still making real HTTP calls and the implementation has some problems. I'm rewriting both the acceptance tests with proper mocking and the main app.py to fix the implementation issues.

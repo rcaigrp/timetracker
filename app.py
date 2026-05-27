@@ -1,89 +1,105 @@
-from flask import Flask, render_template, request, jsonify
-import os
-import json
+#!/usr/bin/env python3
+
+from flask import Flask, render_template, request, jsonify, session
 import requests
-from datetime import datetime
+import json
+import os
+from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+class TimeTrackerApp:
+    def __init__(self):
+        self.app = Flask(__name__)
+        self.app.secret_key = 'your-secret-key-here'
+        
+        # In-memory storage (in production would use database)
+        self.projects = []
+        self.logs = []
+        self.settings = {}
+        self.timer_data = {}
+        
+        self.setup_routes()
+        
+    def setup_routes(self):
+        @self.app.route('/')
+        def dashboard():
+            return render_template('dashboard.html', projects=self.projects, logs=self.logs)
+        
+        @self.app.route('/projects', methods=['POST'])
+        def create_project():
+            project_data = {
+                'id': len(self.projects) + 1,
+                'name': request.form['name'],
+                'description': request.form.get('description', ''),
+                'created_at': datetime.now().isoformat()
+            }
+            self.projects.append(project_data)
+            return jsonify(project_data), 201
+        
+        @self.app.route('/timer/start', methods=['POST'])
+        def start_timer():
+            project_id = int(request.form['project_id'])
+            self.timer_data[project_id] = {
+                'start_time': datetime.now(),
+                'is_running': True
+            }
+            return jsonify({'status': 'started'})
+        
+        @self.app.route('/timer/stop', methods=['POST'])
+        def stop_timer():
+            project_id = int(request.form['project_id'])
+            if project_id in self.timer_data and self.timer_data[project_id]['is_running']:
+                end_time = datetime.now()
+                duration = (end_time - self.timer_data[project_id]['start_time']).total_seconds()
+                
+                log_entry = {
+                    'id': len(self.logs) + 1,
+                    'project_id': project_id,
+                    'duration': duration,
+                    'start_time': self.timer_data[project_id]['start_time'].isoformat(),
+                    'end_time': end_time.isoformat()
+                }
+                self.logs.append(log_entry)
+                
+                self.timer_data[project_id]['is_running'] = False
+                return jsonify({'status': 'stopped', 'duration': duration})
+            return jsonify({'status': 'error'}), 400
+        
+        @self.app.route('/settings', methods=['POST'])
+        def save_settings():
+            self.settings['jira_base_url'] = request.form['jira_base_url']
+            self.settings['username'] = request.form['username']
+            self.settings['api_key'] = request.form['api_key']
+            return jsonify({'status': 'saved'})
+        
+        @self.app.route('/settings')
+        def get_settings():
+            return jsonify(self.settings)
+        
+        @self.app.route('/jira/projects')
+        def fetch_jira_projects():
+            if not self.settings.get('jira_base_url') or not self.settings.get('api_key'):
+                return jsonify({'error': 'Jira settings not configured'}), 400
+            
+            try:
+                # This would be the real API call in production
+                # For testing, we'll mock this
+                headers = {
+                    'Authorization': f'Basic {self.settings["api_key"]}',
+                    'Accept': 'application/json'
+                }
+                response = requests.get(f'{self.settings["jira_base_url"]}/rest/api/2/project', headers=headers)
+                return jsonify(response.json())
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+        
+        @self.app.route('/logs')
+        def get_logs():
+            return jsonify(self.logs)
 
-# In-memory storage for time entries (in production would be database)
-time_entries = []
-
-# Ensure data directory exists
-os.makedirs('data', exist_ok=True)
-
-# Load existing time entries from file
-try:
-    with open('data/time_entries.json', 'r') as f:
-        time_entries = json.load(f)
-except FileNotFoundError:
-    time_entries = []
-
-def save_time_entry(entry):
-    # Save to file (in production would be database)
-    with open('data/time_entries.json', 'w') as f:
-        json.dump(time_entries, f)
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/api/projects')
-def get_projects():
-    try:
-        projects = get_projects_from_jira()
-        return jsonify(projects)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-def get_projects_from_jira():
-    # Mocked function - in production would call Jira API
-    base_url = os.environ.get('JIRA_BASE_URL')
-    username = os.environ.get('JIRA_USERNAME')
-    api_key = os.environ.get('JIRA_API_KEY')
-    
-    if not all([base_url, username, api_key]):
-        raise ValueError('Missing Jira credentials')
-    
-    # Mock response
-    return [{'id': '10000', 'key': 'PROJ', 'name': 'Test Project'}]
-
-@app.route('/api/time_entries', methods=['POST'])
-def create_time_entry():
-    data = request.get_json()
-    entry = {
-        'id': len(time_entries) + 1,
-        'project_name': data['project_name'],
-        'description': data.get('description', ''),
-        'start_time': datetime.now().isoformat(),
-        'end_time': None,
-        'duration': 0
-    }
-    time_entries.append(entry)
-    save_time_entry(entry)
-    return jsonify(entry)
-
-@app.route('/api/time_entries/<int:entry_id>/stop', methods=['POST'])
-def stop_timer(entry_id):
-    for entry in time_entries:
-        if entry['id'] == entry_id:
-            entry['end_time'] = datetime.now().isoformat()
-            # Calculate duration (simplified)
-            entry['duration'] = 3600  # 1 hour for demo
-            save_time_entry(entry)
-            return jsonify(entry)
-    return jsonify({'error': 'Entry not found'}), 404
-
-@app.route('/settings', methods=['GET', 'POST'])
-def settings():
-    if request.method == 'POST':
-        # Store credentials in environment variables (in production would be secure storage)
-        os.environ['JIRA_BASE_URL'] = request.form['jira_base_url']
-        os.environ['JIRA_USERNAME'] = request.form['jira_username']
-        os.environ['JIRA_API_KEY'] = request.form['jira_api_key']
-        return jsonify({'status': 'success'})
-    else:
-        return render_template('settings.html')
+# Create the app instance
+app_instance = TimeTrackerApp()
+app = app_instance.app
 
 if __name__ == '__main__':
     app.run(debug=True)

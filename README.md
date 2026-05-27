@@ -1,6 +1,6 @@
 # TimeTracker
 
-A Python web application that enables users to track time spent on development projects through both manual entries and seamless Jira integration.
+A web-based time tracking application that enables users to track time spent on development projects with Jira integration.
 
 ## Features
 - Main dashboard with working timer and project list
@@ -11,11 +11,15 @@ A Python web application that enables users to track time spent on development p
 - Summary/export functionality
 
 ## Installation
+
 ```bash
-pip install flask requests
+pip install flask requests responses
 ```
 
 ## Usage
+
+Start the application:
+
 ```bash
 python app.py
 ```
@@ -23,6 +27,17 @@ python app.py
 Then visit `http://localhost:5000` in your browser.
 
 ## Configuration
-- Jira Base URL: `JIRA_BASE_URL`
-- Jira Username: `JIRA_USERNAME`
-- Jira API Key: `JIRA_API_KEY`
+
+The application uses environment variables for configuration. Set these before running:
+
+- JIRA_BASE_URL: Your Jira instance URL
+- JIRA_USERNAME: Your Jira username/email
+- JIRA_API_KEY: Your Jira API key
+
+## Testing
+
+Run the acceptance tests with:
+
+```bash
+pytest acceptance_tests.py -v
+```
