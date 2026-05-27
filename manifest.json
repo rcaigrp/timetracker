@@ -1,17 +1,17 @@
 {
   "manifest_version": 3,
   "name": "LocalTrack",
-  "version": "1.0",
-  "permissions": ["storage", "tabs"],
-  "background": {
-    "service_worker": "background.js"
-  },
+  "version": "1.0.0",
+  "description": "Privacy-first local-only time tracking extension",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
   "action": {
     "default_popup": "index.html",
-    "default_icon": "icon.png"
+    "default_title": "LocalTrack"
   },
-  "icons": {
-    "16": "icon.png",
-    "48": "icon.png"
+  "background": {
+    "service_worker": "background.js"
   }
 }

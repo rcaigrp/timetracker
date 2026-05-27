@@ -605,3 +605,7 @@ Resuming TimeTracker project with 3 additional meetings to implement iOS app usi
     "rationale": "The next step is to verify the extension actually works in a real browser environment. Since all files have been created and tests pass, we should package the extension for installation in Chrome/Edge/Firefox to confirm functionality."
   }
 }
+
+## Turn 34 — Craft (2026-05-26 16:08 UTC)
+
+Resumed the TimeTracker project and initialized its iOS app structure with proper folder organization, including project.json and README.md files. The iOS app will implement core time tracking functionality using SwiftUI and SwiftData with local storage and Jira API integration.

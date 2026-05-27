@@ -1,41 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LocalTrack</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <h1>LocalTrack</h1>
-        <div id="timer-display">00:00:00</div>
-        <div id="timer-controls">
-            <button id="start-btn">Start</button>
-            <button id="pause-btn">Pause</button>
-            <button id="stop-btn">Stop</button>
+  <div class="container">
+    <h1>LocalTrack</h1>
+    
+    <!-- Timer Section -->
+    <section class="timer-section">
+      <div class="timer-display" id="timerDisplay">00:00:00</div>
+      <div class="timer-controls">
+        <button id="startBtn">Start</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="stopBtn">Stop</button>
+      </div>
+    </section>
+
+    <!-- Manual Entry Section -->
+    <section class="manual-entry-section">
+      <h2>Manual Entry</h2>
+      <form id="entryForm">
+        <input type="text" id="projectName" placeholder="Project Name" required>
+        <input type="date" id="entryDate" required>
+        <div class="duration-inputs">
+          <input type="number" id="hours" placeholder="Hours" min="0" max="23">
+          <input type="number" id="minutes" placeholder="Minutes" min="0" max="59">
         </div>
-        <div id="manual-entry">
-            <h2>Manual Entry</h2>
-            <form id="entry-form">
-                <input type="text" id="project-name" placeholder="Project Name" required>
-                <input type="date" id="entry-date" required>
-                <input type="number" id="duration-hours" placeholder="Hours" min="0" step="0.5">
-                <input type="number" id="duration-minutes" placeholder="Minutes" min="0">
-                <textarea id="notes" placeholder="Notes"></textarea>
-                <button type="submit">Save Entry</button>
-            </form>
-        </div>
-        <div id="entries-list">
-            <h2>Recent Entries</h2>
-            <ul id="entries-ul"></ul>
-        </div>
-        <div id="export-controls">
-            <button id="export-json-btn">Export JSON</button>
-            <button id="export-csv-btn">Export CSV</button>
-            <button id="clear-btn">Clear Data</button>
-        </div>
-    </div>
-    <script src="popup.js"></script>
+        <textarea id="notes" placeholder="Notes (optional)"></textarea>
+        <button type="submit">Add Entry</button>
+      </form>
+    </section>
+
+    <!-- Summary Section -->
+    <section class="summary-section">
+      <h2>Today's Summary</h2>
+      <div class="summary-display" id="summaryDisplay">0 hours 0 minutes</div>
+    </section>
+
+    <!-- Recent Entries Section -->
+    <section class="entries-section">
+      <h2>Recent Entries</h2>
+      <div class="filter-controls">
+        <button id="clearBtn">Clear All</button>
+        <button id="exportBtn">Export Data</button>
+      </div>
+      <ul id="entriesList"></ul>
+    </section>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>

@@ -1,17 +1,24 @@
-// StorageManager.swift
 import Foundation
-import SwiftData
 
 class StorageManager {
     static let shared = StorageManager()
+    
     private init() {}
     
-    func save<T: PersistentModel>(_ item: T) {
-        // Implementation for saving items
+    func save(entries: [TimeEntry]) {
+        // Implementation for saving to UserDefaults or Core Data
     }
     
-    func fetch<T: PersistentModel>(type: T.Type) -> [T] {
-        // Implementation for fetching items
+    func loadEntries() -> [TimeEntry] {
+        // Implementation for loading from UserDefaults or Core Data
         return []
     }
+}
+
+struct TimeEntry: Codable {
+    let id: String
+    let projectKey: String
+    let startTime: Date
+    let endTime: Date?
+    let notes: String?
 }
