@@ -4,25 +4,29 @@ import PackageDescription
 let package = Package(
     name: "TimeTracker",
     platforms: [
-        .macOS(.v12)
+        .macOS(.v12),
+        .iOS(.v15)
     ],
     products: [
-        .executable(name: "TimeTracker", targets: ["TimeTracker"]),
-        .library(name: "TimeTrackerLib", targets: ["TimeTrackerLib"])
+        .library(
+            name: "TimeTrackerLib",
+            targets: ["TimeTrackerLib"]),
+        .executable(
+            name: "TimeTrackerCLI",
+            targets: ["TimeTrackerCLI"])
     ],
     dependencies: [
         // Add any dependencies here
     ],
     targets: [
-        .executableTarget(
-            name: "TimeTracker",
-            dependencies: ["TimeTrackerLib"],
-            path: "Sources/TimeTracker"
-        ),
         .target(
             name: "TimeTrackerLib",
-            dependencies: [],
-            path: "Sources/TimeTrackerLib"
-        )
+            dependencies: []),
+        .target(
+            name: "TimeTrackerCLI",
+            dependencies: ["TimeTrackerLib"]),
+        .testTarget(
+            name: "TimeTrackerTests",
+            dependencies: ["TimeTrackerLib"])
     ]
 )

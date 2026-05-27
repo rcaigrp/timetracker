@@ -1,6 +1,9 @@
 {
   "builtTestProducts" : [
-
+    {
+      "binaryPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.xctest",
+      "productName" : "TimeTrackerPackageTests"
+    }
   ],
   "copyCommands" : {
 
@@ -9,29 +12,13 @@
 
   ],
   "swiftCommands" : {
-    "C.TimeTracker-debug.module" : {
+    "C.TimeTrackerCLI-debug.module" : {
       "executable" : "/usr/bin/swiftc",
       "importPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug",
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/ContentView.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/TimeTrackerApp.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"
+          "name" : "/workspace/projects/TimeTracker/Sources/TimeTrackerCLI/main.swift"
         },
         {
           "kind" : "file",
@@ -39,14 +26,10 @@
         }
       ],
       "isLibrary" : false,
-      "moduleName" : "TimeTracker",
-      "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule",
+      "moduleName" : "TimeTrackerCLI",
+      "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerCLI.swiftmodule",
       "objects" : [
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ContentView.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimeTrackerApp.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerCLI.build/main.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -68,42 +51,22 @@
         "-Xfrontend",
         "-entry-point-function-name",
         "-Xfrontend",
-        "TimeTracker_main"
+        "TimeTrackerCLI_main"
       ],
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ContentView.swift.o"
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerCLI.build/main.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimeTrackerApp.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerCLI.swiftmodule"
         }
       ],
       "sources" : [
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/ContentView.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/TimeTrackerApp.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"
+        "/workspace/projects/TimeTracker/Sources/TimeTrackerCLI/main.swift"
       ],
-      "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build",
+      "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerCLI.build",
       "wholeModuleOptimization" : false
     },
     "C.TimeTrackerLib-debug.module" : {
@@ -195,12 +158,146 @@
       ],
       "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build",
       "wholeModuleOptimization" : false
+    },
+    "C.TimeTrackerPackageTests-debug.module" : {
+      "executable" : "/usr/bin/swiftc",
+      "importPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/TimeTrackerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.swiftmodule"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "TimeTrackerPackageTests",
+      "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.swiftmodule",
+      "objects" : [
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.build/TimeTrackerTests.swift.o",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-swift-version",
+        "5",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-g",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output"
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.build/TimeTrackerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.swiftmodule"
+        }
+      ],
+      "sources" : [
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/TimeTrackerTests.swift",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.TimeTrackerTests-debug.module" : {
+      "executable" : "/usr/bin/swiftc",
+      "importPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/Tests/TimeTrackerTests/TimeTrackerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.swiftmodule"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "TimeTrackerTests",
+      "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.swiftmodule",
+      "objects" : [
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.build/TimeTrackerTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-swift-version",
+        "5",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-g",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library"
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.build/TimeTrackerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.swiftmodule"
+        }
+      ],
+      "sources" : [
+        "/workspace/projects/TimeTracker/Tests/TimeTrackerTests/TimeTrackerTests.swift"
+      ],
+      "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.build",
+      "wholeModuleOptimization" : false
     }
   },
   "swiftFrontendCommands" : {
 
   },
   "testDiscoveryCommands" : {
-
+    "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/runner.swift" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerTests.build/TimeTrackerTests.swift.o"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/TimeTrackerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerPackageTests.derived/runner.swift"
+        }
+      ]
+    }
   }
 }

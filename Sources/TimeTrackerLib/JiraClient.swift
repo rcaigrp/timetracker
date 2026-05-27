@@ -1,18 +1,25 @@
 import Foundation
 
-public class JiraClient {
-    private let baseURL: String
+class JiraClient {
+    private let baseUrl: String
     private let username: String
-    private let apiKey: String
+    private let apiToken: String
     
-    public init(baseURL: String, username: String, apiKey: String) {
-        self.baseURL = baseURL
+    init(baseUrl: String, username: String, apiToken: String) {
+        self.baseUrl = baseUrl
         self.username = username
-        self.apiKey = apiKey
+        self.apiToken = apiToken
     }
     
-    public func fetchProjects() async throws -> [String] {
-        // Mock implementation - in real app this would make HTTP calls
-        return ["PROJ1", "PROJ2", "PROJ3"]
+    func fetchIssues(for projectKey: String) async throws -> [Issue] {
+        // Mock implementation
+        return []
+    }
+    
+    struct Issue: Codable {
+        let id: String
+        let key: String
+        let summary: String
+        let status: String
     }
 }

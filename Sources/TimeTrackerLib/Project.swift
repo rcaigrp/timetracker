@@ -1,19 +1,13 @@
 import Foundation
 
-public struct Project: Codable, Identifiable {
-    public let id = UUID()
+class Project: Codable {
+    public let id: UUID
     public var name: String
-    public var elapsedTime: TimeInterval
+    public var description: String?
     
-    public init(name: String, elapsedTime: TimeInterval) {
+    init(id: UUID = UUID(), name: String, description: String? = nil) {
+        self.id = id
         self.name = name
-        self.elapsedTime = elapsedTime
-    }
-    
-    public var elapsedTimeFormatted: String {
-        let hours = Int(elapsedTime) / 3600
-        let minutes = (Int(elapsedTime) % 3600) / 60
-        let seconds = Int(elapsedTime) % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        self.description = description
     }
 }

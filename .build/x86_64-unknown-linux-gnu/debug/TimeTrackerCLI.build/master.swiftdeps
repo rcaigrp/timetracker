@@ -1,0 +1,6 @@
+version: "Swift version 5.7.3 (swift-5.7.3-RELEASE)"
+options: "1cf97867e696cde8af8b764c827577d1c6bac91c52f12566ad7d43f06ef3eef3"
+build_start_time: [1779914165, 528512001]
+build_end_time: [1779914166, 542253017]
+inputs:
+  "/workspace/projects/TimeTracker/Sources/TimeTrackerCLI/main.swift": !private [1779914160, 792582511]

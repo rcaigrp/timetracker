@@ -1,7 +1,7 @@
 version: "Swift version 5.7.3 (swift-5.7.3-RELEASE)"
 options: "33eac8e35b58c02bea7e71b39017b4fc2f3b3d3af10e2ade00c4371e29be7855"
-build_start_time: [1779913922, 58140993]
-build_end_time: [1779913923, 289434909]
+build_start_time: [1779914081, 565834045]
+build_end_time: [1779914083, 458827018]
 inputs:
   "/workspace/projects/TimeTracker/Sources/TimeTracker/ContentView.swift": !private [1779913696, 619589090]
   "/workspace/projects/TimeTracker/Sources/TimeTracker/TimeTrackerApp.swift": !private [1779913522, 255027770]
