@@ -2432,3 +2432,7 @@ Fixing Docker environment path mismatch and establishing the Python Flask backen
 ## Turn 7 — Architect (2026-05-27 23:05 UTC)
 
 Switched from Flask to FastAPI and requests to httpx to resolve dependency timeout issues. Rewrote the app to be async and modern, ensuring a robust Jira API integration.
+
+## Turn 8 — Architect (2026-05-27 23:10 UTC)
+
+Abandoned Flask (external dependency) in favor of Python's built-in http.server to eliminate pip installation failures. This approach requires zero dependencies.
