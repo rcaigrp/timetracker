@@ -33,7 +33,7 @@ commands:
 
   "<TimeTracker-debug.module>":
     tool: phony
-    inputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"]
+    inputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"]
     outputs: ["<TimeTracker-debug.module>"]
 
   "<TimeTrackerLib-debug.module>":
@@ -48,16 +48,16 @@ commands:
 
   "C.TimeTracker-debug.module":
     tool: swift-compiler
-    inputs: ["/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift","/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift","/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.swiftmodule"]
-    outputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"]
+    inputs: ["/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.swiftmodule"]
+    outputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"]
     executable: "/usr/bin/swiftc"
     module-name: "TimeTracker"
     module-output-path: "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"
     import-paths: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug"]
     temps-path: "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build"
-    objects: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"]
+    objects: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"]
     other-args: ["-target","x86_64-unknown-linux-gnu","-swift-version","5","-enable-batch-mode","-index-store-path","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/index/store","-Onone","-enable-testing","-g","-j4","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","TimeTracker_main","-Xcc","-fPIC","-package-name","timetracker","-Xcc","-fno-omit-frame-pointer"]
-    sources: ["/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift","/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift","/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"]
+    sources: ["/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"]
     is-library: false
     enable-whole-module-optimization: false
     num-threads: 4
@@ -80,7 +80,7 @@ commands:
 
   "C.timetracker-debug.exe":
     tool: shell
-    inputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimeTracker.swiftmodule.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swiftmodule.o"]
+    inputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimeTracker.swiftmodule.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swiftmodule.o"]
     outputs: ["/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/timetracker"]
     description: "Linking ./.build/x86_64-unknown-linux-gnu/debug/timetracker"
     args: ["/usr/bin/swiftc","-L","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug","-o","/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/timetracker","-module-name","timetracker","-emit-executable","-Xlinker","--defsym","-Xlinker","main=TimeTracker_main","-Xlinker","-rpath=$ORIGIN","@/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/timetracker.product/Objects.LinkFileList","-target","x86_64-unknown-linux-gnu"]

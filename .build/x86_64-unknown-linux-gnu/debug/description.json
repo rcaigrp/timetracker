@@ -23,14 +23,6 @@
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift"
-        },
-        {
-          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"
         },
         {
@@ -42,8 +34,6 @@
       "moduleName" : "TimeTracker",
       "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule",
       "objects" : [
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o",
         "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"
       ],
       "otherArguments" : [
@@ -77,14 +67,6 @@
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o"
-        },
-        {
-          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"
         },
         {
@@ -93,8 +75,6 @@
         }
       ],
       "sources" : [
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift",
         "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"
       ],
       "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build",
@@ -169,8 +149,6 @@
       "timetracker",
       "-incremental",
       "-c",
-      "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift",
-      "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift",
       "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift",
       "-I",
       "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug",

@@ -1,11 +1,12 @@
-// Entry point for the TimeTracker application
-// This is a cross-platform stub that can be compiled in container environment
+// main.swift
 import Foundation
 import TimeTrackerLib
 
-print("TimeTracker application initialized")
+print("TimeTracker App Started")
 
-// In a real iOS environment, this would launch the SwiftUI app
-// For container testing, we'll just verify the build works
-let tracker = TimeTrackerLib()
-print("TimeTracker library loaded successfully: \(tracker)")
+let tracker = TimeTrackerService()
+let entry = tracker.startTimer(for: "Test Project")
+print("Timer started for \(entry.projectName)")
+
+let stoppedEntry = tracker.stopTimer(entry)
+print("Timer stopped for \(stoppedEntry.projectName)")
