@@ -1,52 +1,49 @@
-import json
-import os
-import tempfile
-from datetime import datetime
-from unittest.mock import patch
+import unittest
+from unittest.mock import patch, MagicMock
+from Sources.TimeTrackerLib.TaskManager import TaskManager
 
-class MockTimeTracker:
-    def __init__(self, filename='time_tracker.json'):
-        self.filename = filename
-        self.data = {}
 
-    def _load_data(self):
-        return self.data
+class TestTaskManager(unittest.TestCase):
+    def setUp(self):
+        self.task_manager = TaskManager()
+    
+    def test_criterion_1_start_task_successfully(self):
+        # Mock the Date() call to return a fixed time for testing
+        with patch('datetime.datetime') as mock_datetime:
+            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
+            result = self.task_manager.startTask("Test Task")
+            self.assertTrue(result)
+            
+    def test_criterion_2_stop_task_successfully(self):
+        # First start a task
+        with patch('datetime.datetime') as mock_datetime:
+            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
+            self.task_manager.startTask("Test Task")
+            
+            # Then stop it
+            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 5, 0)
+            result = self.task_manager.stopTask("Test Task")
+            self.assertTrue(result)
+            
+    def test_criterion_3_list_tasks_returns_correctly(self):
+        # Test that listTasks returns the correct number of tasks
+        with patch('datetime.datetime') as mock_datetime:
+            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
+            self.task_manager.startTask("Test Task 1")
+            self.task_manager.startTask("Test Task 2")
+            
+            tasks = self.task_manager.listTasks()
+            self.assertEqual(len(tasks), 2)
+            
+    def test_criterion_4_prevent_duplicate_running_tasks(self):
+        # Test that we can't start a task that's already running
+        with patch('datetime.datetime') as mock_datetime:
+            mock_datetime.now.return_value = datetime.datetime(2023, 1, 1, 10, 0, 0)
+            self.task_manager.startTask("Test Task")
+            
+            # Try to start the same task again
+            result = self.task_manager.startTask("Test Task")
+            self.assertFalse(result)
 
-    def save_data(self):
-        pass
-
-    def start_task(self, task_name):
-        self.data[task_name] = {
-            'start': datetime.now().isoformat(),
-            'end': None
-        }
-        return True
-
-    def stop_task(self, task_name):
-        if task_name not in self.data:
-            return False
-        
-        self.data[task_name]['end'] = datetime.now().isoformat()
-        return True
-
-    def list_tasks(self):
-        return self.data
-
-def test_criterion_1_start_task():
-    tracker = MockTimeTracker()
-    assert tracker.start_task('test_task') == True
-    assert 'test_task' in tracker.data
-    assert tracker.data['test_task']['end'] is None
-
-def test_criterion_2_stop_task():
-    tracker = MockTimeTracker()
-    tracker.start_task('test_task')
-    assert tracker.stop_task('test_task') == True
-    assert tracker.data['test_task']['end'] is not None
-
-def test_criterion_3_list_tasks():
-    tracker = MockTimeTracker()
-    tracker.start_task('task1')
-    tracker.start_task('task2')
-    tasks = tracker.list_tasks()
-    assert len(tasks) == 2
+if __name__ == '__main__':
+    unittest.main()

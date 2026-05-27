@@ -1,8 +1,3 @@
-//
-// JiraClient.swift
-// TimeTracker
-//
-
 import Foundation
 
 public class JiraClient {
@@ -16,8 +11,8 @@ public class JiraClient {
         self.apiKey = apiKey
     }
     
-    public func fetchProjects() async throws -> [Project] {
-        // Mock implementation
-        return []
+    public func fetchProjects() async throws -> [String] {
+        // Mock implementation - in real app this would make HTTP calls
+        return ["PROJ1", "PROJ2", "PROJ3"]
     }
 }

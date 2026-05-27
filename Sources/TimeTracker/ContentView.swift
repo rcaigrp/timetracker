@@ -7,40 +7,35 @@ struct ContentView: View {
         VStack(spacing: 20) {
             Text("Time Tracker")
                 .font(.largeTitle)
+                .padding()
+            
+            Text("Timer: \(timerService.elapsedTimeFormatted)")
+                .font(.title2)
                 
-            Text("Elapsed Time: \(String(format: "%.1f", timerService.elapsedTime)) seconds")
-                .font(.headline)
-                
-            HStack(spacing: 20) {
+            HStack {
                 Button(action: timerService.startTimer) {
                     Text("Start")
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
                 
                 Button(action: timerService.stopTimer) {
                     Text("Stop")
-                        .padding()
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
                 
                 Button(action: timerService.resetTimer) {
                     Text("Reset")
-                        .padding()
-                        .background(Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                }
+            }
+            
+            List(timerService.projects, id: \Project.id) { project in
+                HStack {
+                    Text(project.name)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Text(project.elapsedTimeFormatted)
+                        .foregroundColor(.secondary)
                 }
             }
         }
         .padding()
     }
-}
-
-#Preview {
-    ContentView()
 }

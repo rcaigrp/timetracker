@@ -14,6 +14,12 @@
     "swiftmodule": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/Project~partial.swiftmodule",
     "swift-dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/Project.swiftdeps"
   },
+  "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TaskManager.swift": {
+    "dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TaskManager.d",
+    "object": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TaskManager.swift.o",
+    "swiftmodule": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TaskManager~partial.swiftmodule",
+    "swift-dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TaskManager.swiftdeps"
+  },
   "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift": {
     "dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.d",
     "object": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o",
