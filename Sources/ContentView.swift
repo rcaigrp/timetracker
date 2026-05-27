@@ -1,4 +1,3 @@
-// ContentView.swift
 import SwiftUI
 
 class TimerService: ObservableObject {
@@ -69,5 +68,11 @@ struct ContentView: View {
             }
         }
         .padding()
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }
