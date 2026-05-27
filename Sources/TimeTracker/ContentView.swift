@@ -1,55 +1,51 @@
-// ContentView.swift
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var timerService = TimerService()
+    @StateObject private var timerService = TimerService.shared
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                // Timer display
-                Text("\(timerService.elapsedTimeString)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding()
-                
-                // Timer controls
-                HStack(spacing: 20) {
-                    Button(action: timerService.startTimer) {
-                        Text("Start")
-                            .frame(minWidth: 80)
-                    }
-                    .disabled(timerService.isRunning)
-                    
-                    Button(action: timerService.stopTimer) {
-                        Text("Stop")
-                            .frame(minWidth: 80)
-                    }
-                    .disabled(!timerService.isRunning)
-                    
-                    Button(action: timerService.resetTimer) {
-                        Text("Reset")
-                            .frame(minWidth: 80)
-                    }
+        VStack(spacing: 20) {
+            Text("Time Tracker")
+                .font(.largeTitle)
+                .padding()
+            
+            Text(formatTime(timerService.elapsedTime))
+                .font(.system(size: 48, weight: .bold))
+                .padding()
+            
+            Button(action: {
+                if timerService.isRunning {
+                    timerService.stop()
+                } else {
+                    timerService.start()
                 }
-                
-                // Project list
-                List(timerService.projects, id: \Project.id) { project in
+            }) {
+                Text(timerService.isRunning ? "Stop Timer" : "Start Timer")
+                    .font(.title2)
+                    .padding()
+                    .background(timerService.isRunning ? Color.red : Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
+            List {
+                ForEach(timerService.projects, id: \Project.id) { project in
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text(project.name)
-                                .font(.headline)
-                            Text("\(project.elapsedTimeString)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+                        Text(project.name)
                         Spacer()
+                        Text(formatTime(project.totalTime))
                     }
                 }
             }
-            .navigationTitle("Time Tracker")
-            .navigationBarTitleDisplayMode(.large)
         }
+        .padding()
+    }
+    
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
+        let hours = Int(timeInterval) / 3600
+        let minutes = Int(timeInterval) / 60 % 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
 }
 
