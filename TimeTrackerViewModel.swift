@@ -1,67 +1,38 @@
+// TimeTrackerViewModel.swift
 import Foundation
-import Combine
-
-struct TimeEntry: Identifiable {
-    let id = UUID()
-    let project: String
-    let startTime: Date
-    let endTime: Date
-    let duration: TimeInterval
-}
 
 class TimeTrackerViewModel: ObservableObject {
-    @Published var isRunning: Bool = false
-    @Published var elapsedSeconds: Int = 0
-    @Published var entries: [TimeEntry] = []
+    @Published var projects: [Project] = []
+    @Published var timerService = TimerService()
+    @Published var selectedProject: Project?
     
-    private var timerTimer: Timer?
-    private var startTime: Date?
-    
-    let jiraClient: JiraClientProtocol
-    
-    init(jiraClient: JiraClientProtocol) {
-        self.jiraClient = jiraClient
-        self.loadEntries()
+    init() {
+        // Initialize with sample data for testing
+        loadSampleProjects()
     }
     
-    func startTimer() {
-        guard !isRunning else { return }
-        isRunning = true
-        startTime = Date()
-        timerTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if let start = self.startTime {
-                self.elapsedSeconds = Int(Date().timeIntervalSince(start))
-            }
-        }
+    private func loadSampleProjects() {
+        projects = [
+            Project(name: "Mobile App Development"),
+            Project(name: "Web API Integration"),
+            Project(name: "UI/UX Design"),
+        ]
     }
     
-    func pauseTimer() {
-        guard isRunning else { return }
-        isRunning = false
-        timerTimer?.invalidate()
-        timerTimer = nil
+    func startTimerForProject(_ project: Project) {
+        selectedProject = project
+        timerService.startTimer()
     }
     
     func stopTimer() {
-        guard isRunning || elapsedSeconds > 0 else { return }
-        pauseTimer()
-        if let start = startTime {
-            let entry = TimeEntry(project: "Default", startTime: start, endTime: Date(), duration: TimeInterval(seconds: elapsedSeconds))
-            entries.append(entry)
-            self.saveEntries()
-        }
-        isRunning = false
-        elapsedSeconds = 0
-        startTime = nil
+        timerService.stopTimer()
     }
     
-    private func loadEntries() {
-        // Simulate loading from persistent storage
-        self.entries = []
+    func saveTimeEntry() {
+        // Implementation for saving time entry to local storage
     }
     
-    private func saveEntries() {
-        // Simulate saving to persistent storage
-        print("Saved entries")
+    func fetchProjectsFromJira() {
+        // Implementation for fetching projects from Jira API
     }
 }

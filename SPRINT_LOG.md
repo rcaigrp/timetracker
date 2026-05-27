@@ -617,3 +617,7 @@ Implemented core timer functionality in popup.js and background.js with proper c
 ## Turn 1 — Manager (2026-05-27 16:56 UTC)
 
 Auditing existing TimeTracker project files to understand current state and identify what needs fixing. The project has many SwiftUI/ Swift files but appears incomplete with failing tests, missing implementations, and a README that lacks concrete usage steps.
+
+## Turn 2 — Craft (2026-05-27 16:58 UTC)
+
+Fixed SwiftData import issue by removing it since we're building for iOS and SwiftData isn't available in this context. Also corrected the ViewModel to use proper Swift syntax without SwiftData dependencies.

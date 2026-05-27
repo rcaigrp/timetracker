@@ -1,35 +1,27 @@
+// TimerModel.swift
 import Foundation
 
-class TimerModel: ObservableObject {
-    @Published var isRunning = false
-    @Published var elapsedTime: TimeInterval = 0
+class TimerModel {
+    var id = UUID()
+    var startTime: Date
+    var endTime: Date?
+    var duration: TimeInterval = 0
+    var projectName: String
     
-    private var timer: Timer?
-    private var startTime: Date?
-    
-    func start() {
-        guard !isRunning else { return }
-        
-        isRunning = true
-        startTime = Date()
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.elapsedTime = Date().timeIntervalSince(self.startTime!)
-        }
+    init(projectName: String) {
+        self.projectName = projectName
+        self.startTime = Date()
     }
     
-    func pause() {
-        guard isRunning else { return }
-        
-        isRunning = false
-        timer?.invalidate()
-        timer = nil
+    func stopTimer() {
+        endTime = Date()
+        duration = endTime!.timeIntervalSince(startTime)
     }
     
-    func stop() {
-        isRunning = false
-        timer?.invalidate()
-        timer = nil
-        elapsedTime = 0
+    func formatDuration() -> String {
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+        let seconds = Int(duration) % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
 }
