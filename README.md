@@ -1,30 +1,30 @@
 # TimeTracker
 
-A simple CLI time tracking tool that records project durations.
+A simple command-line time tracking application that records start and stop times for projects.
 
 ## Installation
 
 ```bash
-pip install -r requirements.txt
+pip install click
 ```
 
 ## Usage
 
 Start tracking a project:
 ```bash
-time_tracker start ProjectName
+python main.py start "Project Alpha"
 ```
 
-Stop tracking:
+Stop tracking a project:
 ```bash
-time_tracker stop
+python main.py stop "Project Alpha"
 ```
 
-List all projects:
+View all tracked projects:
 ```bash
-time_tracker list
+python main.py list
 ```
 
 ## Configuration
 
-The tool stores data in time_entries.json in the current directory.
+The application stores data in a SQLite database file called `timetracker.db` in the current directory.
