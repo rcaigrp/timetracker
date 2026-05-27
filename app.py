@@ -1,203 +1,169 @@
-from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
-import sqlite3
+from flask import Flask, request, jsonify
+import json
 import os
+import uuid
 from datetime import datetime
-import requests
 
-class Project(BaseModel):
-    id: Optional[int] = None
-    name: str
-    key: str
+class Project:
+    def __init__(self, name):
+        self.id = str(uuid.uuid4())
+        self.name = name
 
-    class Config:
-        orm_mode = True
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
-class TimeEntry(BaseModel):
-    id: Optional[int] = None
-    project_key: str
-    task_name: str
-    start_time: datetime
-    end_time: Optional[datetime] = None
-    
-    class Config:
-        orm_mode = True
-
-class Settings(BaseModel):
-    jira_url: str
-    username: str
-    api_key: str
-
-app = FastAPI(title="TimeTracker API", version="1.0.0")
-
-# Database setup
-DATABASE_URL = "sqlite:///./timetracker.db"
-
-# Initialize database
-def init_db():
-    conn = sqlite3.connect(DATABASE_URL.replace("sqlite:///", ""))
-    cursor = conn.cursor()
-    
-    # Create projects table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            key TEXT UNIQUE NOT NULL
-        )''')
-    
-    # Create time entries table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS time_entries (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            project_key TEXT NOT NULL,
-            task_name TEXT NOT NULL,
-            start_time TEXT NOT NULL,
-            end_time TEXT
-        )''')
-    
-    # Create settings table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS settings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            jira_url TEXT NOT NULL,
-            username TEXT NOT NULL,
-            api_key TEXT NOT NULL
-        )''')
-    
-    conn.commit()
-    conn.close()
-
-# Dependency to get database connection
-async def get_db():
-    conn = sqlite3.connect(DATABASE_URL.replace("sqlite:///", ""))
-    conn.row_factory = sqlite3.Row  # Enable column access by name
-    try:
-        yield conn
-    finally:
-        conn.close()
-
-# Initialize database on startup
-@app.on_event("startup")
-async def startup_event():
-    init_db()
-
-# Health check endpoint
-@app.get("/")
-async def root():
-    return {"message": "TimeTracker dashboard is running"}
-
-# Project endpoints
-@app.post("/projects", response_model=Project)
-async def create_project(project: Project, db=Depends(get_db)):
-    cursor = db.cursor()
-    try:
-        cursor.execute(
-            "INSERT INTO projects (name, key) VALUES (?, ?)",
-            (project.name, project.key)
-        )
-        db.commit()
-        project.id = cursor.lastrowid
+    @classmethod
+    def from_dict(cls, data):
+        project = cls(data['name'])
+        project.id = data['id']
         return project
-    except sqlite3.IntegrityError:
-        raise HTTPException(status_code=400, detail="Project key already exists")
 
-@app.get("/projects", response_model=List[Project])
-async def get_projects(db=Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM projects")
-    rows = cursor.fetchall()
-    return [Project(id=row['id'], name=row['name'], key=row['key']) for row in rows]
+class Timer:
+    def __init__(self, project_id):
+        self.project_id = project_id
+        self.start_time = None
+        self.stop_time = None
+        self.elapsed_time = 0.0
 
-# Time entry endpoints
-@app.post("/time_entries/start", response_model=TimeEntry)
-async def start_timer(entry: TimeEntry, db=Depends(get_db)):
-    cursor = db.cursor()
-    entry.start_time = datetime.now()
-    cursor.execute(
-        "INSERT INTO time_entries (project_key, task_name, start_time) VALUES (?, ?, ?)",
-        (entry.project_key, entry.task_name, entry.start_time.isoformat())
-    )
-    db.commit()
-    entry.id = cursor.lastrowid
-    return entry
+    def to_dict(self):
+        return {
+            'project_id': self.project_id,
+            'start_time': self.start_time,
+            'stop_time': self.stop_time,
+            'elapsed_time': self.elapsed_time
+        }
 
-@app.post("/time_entries/stop", response_model=TimeEntry)
-async def stop_timer(entry: TimeEntry, db=Depends(get_db)):
-    cursor = db.cursor()
-    entry.end_time = datetime.now()
-    cursor.execute(
-        "UPDATE time_entries SET end_time = ? WHERE project_key = ? AND task_name = ? AND end_time IS NULL",
-        (entry.end_time.isoformat(), entry.project_key, entry.task_name)
-    )
-    db.commit()
-    if cursor.rowcount == 0:
-        raise HTTPException(status_code=400, detail="No active timer found for this task")
-    return entry
+    @classmethod
+    def from_dict(cls, data):
+        timer = cls(data['project_id'])
+        timer.start_time = data.get('start_time')
+        timer.stop_time = data.get('stop_time')
+        timer.elapsed_time = data.get('elapsed_time', 0.0)
+        return timer
 
-@app.get("/time_entries", response_model=List[TimeEntry])
-async def get_time_entries(db=Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM time_entries")
-    rows = cursor.fetchall()
-    return [TimeEntry(
-        id=row['id'],
-        project_key=row['project_key'],
-        task_name=row['task_name'],
-        start_time=datetime.fromisoformat(row['start_time']),
-        end_time=datetime.fromisoformat(row['end_time']) if row['end_time'] else None
-    ) for row in rows]
+class Settings:
+    def __init__(self):
+        self.jira_base_url = ""
+        self.jira_username = ""
+        self.jira_api_key = ""
 
-# Settings endpoints
-@app.post("/settings", response_model=Settings)
-async def set_settings(settings: Settings, db=Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute(
-        "INSERT OR REPLACE INTO settings (id, jira_url, username, api_key) VALUES (1, ?, ?, ?)",
-        (settings.jira_url, settings.username, settings.api_key)
-    )
-    db.commit()
-    return settings
+    def to_dict(self):
+        return {
+            'jira_base_url': self.jira_base_url,
+            'jira_username': self.jira_username,
+            'jira_api_key': self.jira_api_key
+        }
 
-@app.get("/settings", response_model=Settings)
-async def get_settings(db=Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM settings WHERE id = 1")
-    row = cursor.fetchone()
-    if not row:
-        raise HTTPException(status_code=404, detail="Settings not found")
-    return Settings(
-        jira_url=row['jira_url'],
-        username=row['username'],
-        api_key=row['api_key']
-    )
+    @classmethod
+    def from_dict(cls, data):
+        settings = cls()
+        settings.jira_base_url = data.get('jira_base_url', '')
+        settings.jira_username = data.get('jira_username', '')
+        settings.jira_api_key = data.get('jira_api_key', '')
+        return settings
 
-# Jira integration endpoints
-@app.get("/jira/projects")
-async def fetch_jira_projects(db=Depends(get_db)):
-    # Get settings from database
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM settings WHERE id = 1")
-    row = cursor.fetchone()
-    if not row:
-        raise HTTPException(status_code=400, detail="Jira settings not configured")
-    
-    jira_url = row['jira_url']
-    username = row['username']
-    api_key = row['api_key']
-    
-    # Fetch projects from Jira API
-    response = requests.get(
-        f"{jira_url}/rest/api/2/project",
-        auth=(username, api_key)
-    )
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Failed to fetch projects from Jira")
-    
-    return response.json()
+# Initialize Flask app
+app = Flask(__name__)
 
-# Test endpoint for development
-@app.get("/test")
-async def test_endpoint():
-    return {"message": "API is working correctly"}
+# File paths for data persistence
+PROJECTS_FILE = "projects.json"
+TIMERS_FILE = "timers.json"
+SETTINGS_FILE = "settings.json"
+
+# Load existing data on startup
+projects = load_projects()
+timers = load_timers()
+settings = load_settings()
+
+def save_projects(projects):
+    with open(PROJECTS_FILE, 'w') as f:
+        json.dump([project.to_dict() for project in projects], f)
+
+def load_projects():
+    if os.path.exists(PROJECTS_FILE):
+        with open(PROJECTS_FILE, 'r') as f:
+            data = json.load(f)
+            return [Project.from_dict(item) for item in data]
+    return []
+
+def save_timers(timers):
+    with open(TIMERS_FILE, 'w') as f:
+        json.dump([timer.to_dict() for timer in timers], f)
+
+def load_timers():
+    if os.path.exists(TIMERS_FILE):
+        with open(TIMERS_FILE, 'r') as f:
+            data = json.load(f)
+            return [Timer.from_dict(item) for item in data]
+    return []
+
+def save_settings(settings):
+    with open(SETTINGS_FILE, 'w') as f:
+        json.dump(settings.to_dict(), f)
+
+def load_settings():
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, 'r') as f:
+            data = json.load(f)
+            return Settings.from_dict(data)
+    return Settings()
+
+@app.route('/', methods=['GET'])
+def dashboard():
+    return jsonify({'message': 'TimeTracker Dashboard'})
+
+@app.route('/projects', methods=['POST'])
+def create_project():
+    data = request.get_json()
+    project = Project(data['name'])
+    projects.append(project)
+    save_projects(projects)
+    return jsonify(project.to_dict()), 201
+
+@app.route('/projects', methods=['GET'])
+def get_projects():
+    return jsonify([project.to_dict() for project in projects])
+
+@app.route('/projects/<project_id>/start', methods=['POST'])
+def start_timer(project_id):
+    timer = Timer(project_id)
+    timer.start_time = datetime.now().timestamp()
+    timers.append(timer)
+    save_timers(timers)
+    return jsonify({'message': 'Timer started'}), 200
+
+@app.route('/projects/<project_id>/stop', methods=['POST'])
+def stop_timer(project_id):
+    for timer in timers:
+        if timer.project_id == project_id and timer.start_time and not timer.stop_time:
+            timer.stop_time = datetime.now().timestamp()
+            timer.elapsed_time += timer.stop_time - timer.start_time
+            save_timers(timers)
+            return jsonify({'message': 'Timer stopped', 'elapsed_time': timer.elapsed_time}), 200
+    return jsonify({'error': 'Timer not found or already stopped'}), 404
+
+@app.route('/projects/<project_id>/timer', methods=['GET'])
+def get_timer(project_id):
+    for timer in timers:
+        if timer.project_id == project_id:
+            return jsonify(timer.to_dict()), 200
+    return jsonify({'error': 'Timer not found'}), 404
+
+@app.route('/settings', methods=['POST'])
+def set_settings():
+    data = request.get_json()
+    settings.jira_base_url = data['jira_base_url']
+    settings.jira_username = data['jira_username']
+    settings.jira_api_key = data['jira_api_key']
+    save_settings(settings)
+    return jsonify({'message': 'Settings saved'}), 200
+
+@app.route('/settings', methods=['GET'])
+def get_settings():
+    return jsonify(settings.to_dict()), 200
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

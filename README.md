@@ -1,37 +1,37 @@
-# Time Tracker
+# TimeTracker
 
-A simple command-line time tracking tool that records task durations using SQLite.
+A simple time tracking application that allows users to create projects, track time spent on each project, and manage Jira integration settings.
 
 ## Installation
 
-No installation required. Just run the Python script directly.
-
 ```bash
-python main.py
+pip install flask
 ```
 
 ## Usage
 
-Start a task:
+Run the application:
+
 ```bash
-python main.py start "task name"
+python app.py
 ```
 
-Stop a task:
-```bash
-python main.py stop "task name"
-```
+The application will be available at http://localhost:5000
 
-List active tasks:
-```bash
-python main.py list
-```
+## API Endpoints
 
-Show report of all tracked tasks:
-```bash
-python main.py report
-```
+- `GET /` - Dashboard
+- `POST /projects` - Create a new project
+- `GET /projects` - List all projects
+- `POST /projects/{id}/start` - Start timer for a project
+- `POST /projects/{id}/stop` - Stop timer for a project
+- `GET /projects/{id}/timer` - Get timer data for a project
+- `POST /settings` - Set Jira settings
+- `GET /settings` - Get current Jira settings
 
 ## Configuration
 
-The tool uses a SQLite database file called `timetracker.db` in the current directory to store task data.
+The application stores its data in JSON files:
+- `projects.json` - Stores project information
+- `timers.json` - Stores timer data
+- `settings.json` - Stores Jira integration settings
