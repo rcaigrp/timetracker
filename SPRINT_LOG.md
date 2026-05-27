@@ -2448,3 +2448,7 @@ Workspace sanitized. Removed 36,000+ Swift/iOS artifacts and node_modules direct
 ## Turn 11 — Manager (2026-05-27 23:43 UTC)
 
 
+
+## Turn 12 — Manager (2026-05-27 23:53 UTC)
+
+Rewrote app.py to implement actual Jira API fetching logic and switched acceptance_tests.py to use unittest.mock instead of responses library to satisfy the 'different library' constraint.
