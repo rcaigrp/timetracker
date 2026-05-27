@@ -1,35 +1,4 @@
-// ContentView.swift
 import SwiftUI
-
-class TimerService: ObservableObject {
-    @Published var isRunning = false
-    @Published var elapsedTime: TimeInterval = 0
-    private var timer: Timer?
-    private var startTime: Date?
-    
-    func start() {
-        guard !isRunning else { return }
-        isRunning = true
-        startTime = Date()
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if let startTime = self.startTime {
-                self.elapsedTime = Date().timeIntervalSince(startTime)
-            }
-        }
-    }
-    
-    func stop() {
-        isRunning = false
-        timer?.invalidate()
-        timer = nil
-    }
-    
-    func reset() {
-        stop()
-        elapsedTime = 0
-    }
-}
 
 struct ContentView: View {
     @StateObject private var timerService = TimerService()
@@ -39,11 +8,11 @@ struct ContentView: View {
             Text("Time Tracker")
                 .font(.largeTitle)
                 
-            Text("Elapsed Time: \(String(format: "%02d:%02d:%02d", Int(timerService.elapsedTime) / 3600, (Int(timerService.elapsedTime) % 3600) / 60, Int(timerService.elapsedTime) % 60))")
-                .font(.title2)
+            Text("Elapsed Time: \(String(format: "%.1f", timerService.elapsedTime)) seconds")
+                .font(.headline)
                 
-            HStack {
-                Button(action: timerService.start) {
+            HStack(spacing: 20) {
+                Button(action: timerService.startTimer) {
                     Text("Start")
                         .padding()
                         .background(Color.green)
@@ -51,7 +20,7 @@ struct ContentView: View {
                         .cornerRadius(8)
                 }
                 
-                Button(action: timerService.stop) {
+                Button(action: timerService.stopTimer) {
                     Text("Stop")
                         .padding()
                         .background(Color.red)
@@ -59,10 +28,10 @@ struct ContentView: View {
                         .cornerRadius(8)
                 }
                 
-                Button(action: timerService.reset) {
+                Button(action: timerService.resetTimer) {
                     Text("Reset")
                         .padding()
-                        .background(Color.blue)
+                        .background(Color.gray)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
@@ -70,4 +39,8 @@ struct ContentView: View {
         }
         .padding()
     }
+}
+
+#Preview {
+    ContentView()
 }
