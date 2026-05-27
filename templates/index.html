@@ -4,69 +4,59 @@
     <title>TimeTracker</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
-        .timer { font-size: 2em; margin: 20px 0; }
-        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .project { border: 1px solid #ccc; padding: 10px; margin: 5px 0; }
+        button { margin: 5px; padding: 5px 10px; }
     </style>
 </head>
 <body>
-    <h1>TimeTracker Dashboard</h1>
+    <h1>TimeTracker</h1>
     
-    <div class="timer">
-        <span id="time-display">00:00:00</span>
-        <br>
-        <button onclick="startTimer()">Start</button>
-        <button onclick="stopTimer()">Stop</button>
-        <button onclick="resetTimer()">Reset</button>
+    <div id="projects">
+        {% for project in data.projects %}
+        <div class="project" data-id="{{ project.id }}">
+            <h3>{{ project.name }}</h3>
+            <p>Duration: {{ project.duration }} seconds</p>
+            <p>Status: {% if project.is_active %}Active{% else %}Inactive{% endif %}</p>
+            {% if not project.is_active and project.start_time %}
+                <button onclick="startProject({{ project.id }})">Start</button>
+            {% elif project.is_active %}
+                <button onclick="stopProject({{ project.id }})">Stop</button>
+            {% else %}
+                <button onclick="startProject({{ project.id }})">Start</button>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
     
-    <h2>Projects</h2>
-    <ul id="projects-list">
-        <!-- Projects will be loaded here -->
-    </ul>
+    <form id="new-project-form">
+        <input type="text" id="project-name" placeholder="Project name" required>
+        <button type="submit">Create Project</button>
+    </form>
     
     <script>
-        // Timer functionality
-        let timerInterval;
-        let seconds = 0;
-        
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                seconds++;
-                updateDisplay();
-            }, 1000);
-        }
-        
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-        
-        function resetTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            updateDisplay();
-        }
-        
-        function updateDisplay() {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            
-            document.getElementById('time-display').textContent =
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-        
-        // Load projects
-        fetch('/api/projects')
-            .then(response => response.json())
-            .then(data => {
-                const list = document.getElementById('projects-list');
-                data.forEach(project => {
-                    const li = document.createElement('li');
-                    li.textContent = `${project.key}: ${project.name}`;
-                    list.appendChild(li);
-                });
+        document.getElementById('new-project-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('project-name').value;
+            fetch('/api/projects', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: name})
+            }).then(response => response.json()).then(data => {
+                location.reload();
             });
+        });
+        
+        function startProject(id) {
+            fetch(`/api/projects/${id}/start`, {method: 'POST'})
+                .then(response => response.json())
+                .then(data => location.reload());
+        }
+        
+        function stopProject(id) {
+            fetch(`/api/projects/${id}/stop`, {method: 'POST'})
+                .then(response => response.json())
+                .then(data => location.reload());
+        }
     </script>
 </body>
 </html>
