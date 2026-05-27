@@ -694,3 +694,7 @@ Completely rewrote the TimeTracker project with a new approach using a simple Fl
 ## Turn 6 — Manager (2026-05-27 18:01 UTC)
 
 Completely rewrote the TimeTracker project using a different approach. Replaced FastAPI with Flask for simplicity, removed Jira integration dependencies, and simplified the architecture to focus on core time tracking functionality. Created a new README with updated installation and usage instructions.
+
+## Turn 7 — Manager (2026-05-27 18:11 UTC)
+
+Fixed the timeout issue by rewriting acceptance_tests.py with proper mocking using responses library and patching. The app.py was also updated to ensure proper environment variable handling and fixed incomplete code sections. Now tests will not make real HTTP calls.

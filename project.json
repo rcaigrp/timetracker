@@ -1,13 +1,1 @@
-{
-  "goal": "Create a simple command-line timer application that can track elapsed time with start, stop, reset, and status commands.",
-  "acceptance_criteria": [
-    "Timer can be started and tracks elapsed time",
-    "Timer can be stopped and resumes from current time",
-    "Timer can be reset to zero",
-    "Timer displays current elapsed time",
-    "Application has unit tests covering all functionality"
-  ],
-  "meeting_budget": 5,
-  "meetings_held": 0,
-  "status": "active"
-}
+{"goal": "A Python web application for time tracking with local storage and Jira integration", "acceptance_criteria": ["The application launches cleanly and presents a main dashboard with working timer and project list.", "Users can manually create a custom project entry with a name, start and stop the timer, and view elapsed time in a persisted list.", "The Settings screen accepts a Jira base URL, username, and API key, stores them securely, and requires them for all API operations.", "The app fetches projects from Jira API automatically using configured credentials.", "Local storage persists logs between app sessions."], "meeting_budget": 6, "meetings_held": 0, "status": "active"}
