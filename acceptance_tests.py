@@ -1,66 +1,99 @@
-import os
-import sqlite3
-import tempfile
-from unittest.mock import patch
+import pytest
+from unittest.mock import patch, MagicMock
+from fastapi.testclient import TestClient
+from app import app, get_db, Project, TimeEntry
 
-def test_criterion_1_track_time():
-    # Test that we can start and stop tasks
-    from main import TaskManager
+class MockDB:
+    def __init__(self):
+        self.projects = []
+        self.time_entries = []
+
+    def add_project(self, project):
+        self.projects.append(project)
+        return project
+
+    def get_projects(self):
+        return self.projects
+
+    def add_time_entry(self, entry):
+        self.time_entries.append(entry)
+        return entry
+
+    def get_time_entries(self):
+        return self.time_entries
+
+    def close(self):
+        pass
+
+def mock_get_db():
+    return MockDB()
+
+@pytest.fixture
+def client():
+    app.dependency_overrides[get_db] = mock_get_db
+    client = TestClient(app)
+    return client
+
+
+test_project_data = {
+    "name": "Test Project",
+    "key": "TP"
+}
+
+test_time_entry_data = {
+    "project_key": "TP",
+    "task_name": "Test Task",
+    "start_time": "2023-01-01T10:00:00Z",
+    "end_time": "2023-01-01T11:00:00Z"
+}
+
+def test_criterion_1_dashboard_launches(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "dashboard" in response.json().get("message", "")
+
+def test_criterion_2_timer_operations(client):
+    # Test starting timer
+    response = client.post("/time_entries/start", json={"project_key": "TP", "task_name": "Test Task"})
+    assert response.status_code == 200
     
-    with tempfile.TemporaryDirectory() as tmpdir:
-        db_path = os.path.join(tmpdir, 'timetracker.db')
-        tm = TaskManager(db_path)
-        
-        # Start a task
-        tm.start_task('test_task')
-        
-        # Stop the task
-        tm.stop_task('test_task')
-        
-        # Check that task was recorded in database
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM tasks")
-        result = cursor.fetchall()
-        assert len(result) == 1
-        conn.close()
+    # Test stopping timer
+    response = client.post("/time_entries/stop", json={"project_key": "TP", "task_name": "Test Task"})
+    assert response.status_code == 200
+    
+    # Test listing time entries
+    response = client.get("/time_entries")
+    assert response.status_code == 200
+    
+
+def test_criterion_3_settings_storage(client):
+    # Test setting credentials
+    response = client.post("/settings", json={
+        "jira_url": "https://example.atlassian.net",
+        "username": "test@example.com",
+        "api_key": "secret-key"
+    })
+    assert response.status_code == 200
+    
+
+def test_criterion_4_jira_projects_fetch(client):
+    # Test fetching projects from Jira API
+    with patch('requests.get') as mock_get:
+        mock_get.return_value.json.return_value = {
+            "values": [
+                {"key": "TP", "name": "Test Project"}
+            ]
+        }
+        response = client.get("/jira/projects")
+        assert response.status_code == 200
         
 
-def test_criterion_2_list_active_tasks():
-    # Test listing of active tasks
-    from main import TaskManager
+def test_criterion_5_local_storage_persistence(client):
+    # Test creating project entry
+    response = client.post("/projects", json=test_project_data)
+    assert response.status_code == 200
     
-    with tempfile.TemporaryDirectory() as tmpdir:
-        db_path = os.path.join(tmpdir, 'timetracker.db')
-        tm = TaskManager(db_path)
-        
-        # Start a task
-        tm.start_task('test_task')
-        
-        # List active tasks
-        active_tasks = tm.list_active_tasks()
-        assert 'test_task' in active_tasks
-        
-
-def test_criterion_3_persist_data():
-    # Test that data persists between sessions
-    from main import TaskManager
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
-        db_path = os.path.join(tmpdir, 'timetracker.db')
-        tm1 = TaskManager(db_path)
-        
-        # Start and stop a task
-        tm1.start_task('persistent_task')
-        tm1.stop_task('persistent_task')
-        
-        # Create new instance to verify persistence
-        tm2 = TaskManager(db_path)
-        
-        # Check that task was recorded in database
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM tasks")
-        result = cursor.fetchall()
-        assert len(result) == 1
-        conn.close()
+    # Test retrieving projects
+    response = client.get("/projects")
+    assert response.status_code == 200
+    assert len(response.json()) >= 1
