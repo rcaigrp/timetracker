@@ -710,3 +710,7 @@ Fixed timeout issues by rewriting acceptance_tests.py with proper mocking using 
 ## Turn 10 — Manager (2026-05-27 18:29 UTC)
 
 Auditing Swift files to identify issues preventing clean launch and working timer/project list. Found critical missing implementations in TimeTrackerApp.swift and JiraClient.swift that prevent proper UI initialization and API integration.
+
+## Turn 11 — Craft (2026-05-27 18:32 UTC)
+
+I see the issue - my previous file write had syntax errors and incomplete code. I need to fix the TimeTrackerApp.swift file by properly implementing the SwiftUI structure with correct syntax and complete views. The error shows consecutive statements need semicolons, which means I need to properly close the file and avoid mixing Swift code incorrectly.

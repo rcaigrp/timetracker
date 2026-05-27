@@ -1,4 +1,6 @@
 // TimeTrackerApp.swift
+// This file defines the main SwiftUI application structure
+
 import SwiftUI
 
 @main
