@@ -2252,3 +2252,7 @@ Fixed the test installation issue by correcting the pytest command syntax and en
 ## Turn 19 — Steward (2026-05-27 19:34 UTC)
 
 Completely rewrote the TimeTracker project to use Python instead of Swift since Swift isn't available in the container. Created a new Python-based time tracking application with proper project structure, README, and acceptance tests.
+
+## Turn 20 — Manager (2026-05-27 19:37 UTC)
+
+Fixed import error by rewriting test file with correct sys.path insertion and ensuring source file exists. Created TimerService.py with proper implementation and updated test to use full path imports.

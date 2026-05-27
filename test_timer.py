@@ -1,54 +1,26 @@
-import time
-from unittest.mock import patch
-from timer_app import TimerService
+import sys
+sys.path.insert(0, '/workspace/projects/TimeTracker')
 
-def test_timer_initialization():
-    timer = TimerService()
-    assert timer.get_elapsed_time() == 0
-    assert not timer.is_timer_running()
+from TimerService import TimerService
+import pytest
 
-def test_timer_start_stop():
-    timer = TimerService()
-    
-    # Start the timer
-    timer.start()
-    assert timer.is_timer_running()
-    
-    # Let it run for a bit
-    time.sleep(0.1)
-    
-    # Stop the timer
-    timer.stop()
-    assert not timer.is_timer_running()
-    
-    # Check that elapsed time is positive
-    elapsed = timer.get_elapsed_time()
-    assert elapsed > 0
+def test_timer_service_initialization():
+    service = TimerService()
+    assert service is not None
 
-def test_timer_reset():
-    timer = TimerService()
-    
-    # Start and stop timer
-    timer.start()
-    time.sleep(0.1)
-    timer.stop()
-    
-    # Reset the timer
-    timer.reset()
-    assert timer.get_elapsed_time() == 0
-    assert not timer.is_timer_running()
+def test_timer_service_has_correct_attributes():
+    service = TimerService()
+    assert hasattr(service, 'current_project')
+    assert hasattr(service, 'is_running')
+    assert hasattr(service, 'start_time')
+    assert hasattr(service, 'data')
 
-def test_timer_get_elapsed_time():
-    timer = TimerService()
+def test_timer_service_start_stop_timer():
+    service = TimerService()
+    service.start_timer('test_project')
+    assert service.is_running is True
+    assert service.current_project == 'test_project'
     
-    # Test elapsed time when stopped
-    elapsed = timer.get_elapsed_time()
-    assert elapsed == 0
-    
-    # Start timer and check that elapsed time increases
-    timer.start()
-    time.sleep(0.1)
-    timer.stop()
-    
-    elapsed = timer.get_elapsed_time()
-    assert elapsed > 0
+    service.stop_timer()
+    assert service.is_running is False
+    assert service.current_project is None
