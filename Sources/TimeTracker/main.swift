@@ -1,12 +1,14 @@
+//
 // main.swift
+// TimeTracker
+//
+
 import Foundation
 import TimeTrackerLib
 
-print("TimeTracker App Started")
+print("TimeTracker App Starting...")
 
-let tracker = TimeTrackerService()
-let entry = tracker.startTimer(for: "Test Project")
-print("Timer started for \(entry.projectName)")
+let timerService = TimerService()
+print("Timer service created successfully")
 
-let stoppedEntry = tracker.stopTimer(entry)
-print("Timer stopped for \(stoppedEntry.projectName)")
+// Placeholder for actual app initialization

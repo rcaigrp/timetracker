@@ -1,4 +1,7 @@
 /workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimeTracker.swiftmodule.o
 /workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o
+/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/JiraClient.swift.o
+/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/Project.swift.o
 /workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o
 /workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swiftmodule.o
+/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimerService.swift.o

@@ -86,14 +86,29 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/JiraClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/Project.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimerService.swift"
         }
       ],
       "isLibrary" : true,
       "moduleName" : "TimeTrackerLib",
       "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.swiftmodule",
       "objects" : [
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o"
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/JiraClient.swift.o",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/Project.swift.o",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimerService.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -123,7 +138,19 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/JiraClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/Project.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimeTrackerLib.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build/TimerService.swift.o"
         },
         {
           "kind" : "file",
@@ -131,7 +158,10 @@
         }
       ],
       "sources" : [
-        "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift"
+        "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/JiraClient.swift",
+        "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/Project.swift",
+        "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift",
+        "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimerService.swift"
       ],
       "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTrackerLib.build",
       "wholeModuleOptimization" : false
@@ -189,7 +219,10 @@
       "timetracker",
       "-incremental",
       "-c",
+      "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/JiraClient.swift",
+      "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/Project.swift",
       "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift",
+      "/workspace/projects/TimeTracker/Sources/TimeTrackerLib/TimerService.swift",
       "-I",
       "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug",
       "-target",

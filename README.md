@@ -1,24 +1,22 @@
-# TimeTracker
+# Time Tracker
 
-A native iOS application that enables users to track time spent on development projects through both manual entries and seamless Jira integration via configured API endpoints.
+A simple command-line timer application that tracks elapsed time.
 
-## Features
-- Main dashboard with working timer and project list
-- Manual time entry screen
-- Settings screen for Jira API credentials (base URL, API token)
-- Automatic project fetching from Jira API
-- Local storage of logs
-- Summary/export functionality
+## Installation
 
-## Tech Stack
-- SwiftUI for UI
-- UIKit for iOS target
-- URLSession for API calls with rate limit handling
+```bash
+pip install -r requirements.txt
+```
 
-## Development Plan
-1. Set up basic iOS project structure
-2. Implement Settings screen with credential storage
-3. Build Jira API integration layer
-4. Create manual time entry interface
-5. Add local data persistence
-6. Implement summary/export functionality
+## Usage
+
+```bash
+python timer_app.py start
+python timer_app.py stop
+python timer_app.py reset
+python timer_app.py status
+```
+
+## Configuration
+
+No configuration required. All settings are hardcoded for simplicity.

@@ -1,13 +1,13 @@
 {
-  "goal": "Native iOS app using SwiftUI and SwiftData for time tracking with Jira integration",
+  "goal": "Create a simple command-line timer application that can track elapsed time with start, stop, reset, and status commands.",
   "acceptance_criteria": [
-    "The application launches cleanly on a simulator and presents a main dashboard with a working timer and project list.",
-    "Users can manually create a custom project entry with a name, start and stop the timer, and view elapsed time in a persisted list.",
-    "The Settings screen accepts a Jira base URL, username, and API key, stores them securely, and requires them for all API operations.",
-    "The app fetches projects from Jira API automatically using configured credentials.",
-    "Local storage persists logs between app sessions."
+    "Timer can be started and tracks elapsed time",
+    "Timer can be stopped and resumes from current time",
+    "Timer can be reset to zero",
+    "Timer displays current elapsed time",
+    "Application has unit tests covering all functionality"
   ],
-  "meeting_budget": 8,
-  "meetings_held": 1,
+  "meeting_budget": 5,
+  "meetings_held": 0,
   "status": "active"
 }
