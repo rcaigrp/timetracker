@@ -23,19 +23,15 @@
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/AppDelegate.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/DashboardView.swift"
-        },
-        {
-          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift"
         },
         {
           "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"
         },
         {
           "kind" : "file",
@@ -46,10 +42,9 @@
       "moduleName" : "TimeTracker",
       "moduleOutputPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule",
       "objects" : [
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/AppDelegate.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/DashboardView.swift.o",
         "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o",
-        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o"
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/ViewController.swift.o",
+        "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -82,14 +77,6 @@
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/AppDelegate.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/DashboardView.swift.o"
-        },
-        {
-          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o"
         },
         {
@@ -98,14 +85,17 @@
         },
         {
           "kind" : "file",
+          "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/main.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.swiftmodule"
         }
       ],
       "sources" : [
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/AppDelegate.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/DashboardView.swift",
         "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift",
-        "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift"
+        "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift",
+        "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift"
       ],
       "tempsPath" : "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build",
       "wholeModuleOptimization" : false
@@ -179,10 +169,9 @@
       "timetracker",
       "-incremental",
       "-c",
-      "/workspace/projects/TimeTracker/Sources/TimeTracker/AppDelegate.swift",
-      "/workspace/projects/TimeTracker/Sources/TimeTracker/DashboardView.swift",
       "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift",
       "/workspace/projects/TimeTracker/Sources/TimeTracker/ViewController.swift",
+      "/workspace/projects/TimeTracker/Sources/TimeTracker/main.swift",
       "-I",
       "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug",
       "-target",
