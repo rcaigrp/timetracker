@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TimeTracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, button { padding: 8px; margin: 5px 0; }
+        #projects-list, #entries-list { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>TimeTracker</h1>
+    
+    <div class="form-group">
+        <h2>Add Project</h2>
+        <input type="text" id="project-name" placeholder="Project Name">
+        <input type="text" id="project-jira-id" placeholder="Jira ID (optional)">
+        <button onclick="createProject()">Add Project</button>
+    </div>
+    
+    <div class="form-group">
+        <h2>Add Time Entry</h2>
+        <input type="number" id="entry-project-id" placeholder="Project ID">
+        <input type="text" id="entry-start-time" placeholder="Start Time (YYYY-MM-DD HH:MM)">
+        <input type="text" id="entry-end-time" placeholder="End Time (optional)">
+        <input type="number" id="entry-duration" placeholder="Duration (seconds, optional)">
+        <button onclick="createTimeEntry()">Add Entry</button>
+    </div>
+    
+    <div id="projects-list">
+        <h2>Projects</h2>
+        <ul id="projects-ul"></ul>
+    </div>
+    
+    <div id="entries-list">
+        <h2>Time Entries</h2>
+        <ul id="entries-ul"></ul>
+    </div>
+    
+    <script>
+        function loadProjects() {
+            fetch('/api/projects')
+                .then(response => response.json())
+                .then(data => {
+                    const ul = document.getElementById('projects-ul');
+                    ul.innerHTML = '';
+                    data.forEach(project => {
+                        const li = document.createElement('li');
+                        li.textContent = `ID: ${project.id}, Name: ${project.name}, Jira ID: ${project.jira_id}`;
+                        ul.appendChild(li);
+                    });
+                });
+        }
+
+        function loadTimeEntries() {
+            fetch('/api/time_entries')
+                .then(response => response.json())
+                .then(data => {
+                    const ul = document.getElementById('entries-ul');
+                    ul.innerHTML = '';
+                    data.forEach(entry => {
+                        const li = document.createElement('li');
+                        li.textContent = `ID: ${entry.id}, Project ID: ${entry.project_id}, Start: ${entry.start_time}, End: ${entry.end_time}, Duration: ${entry.duration}`;
+                        ul.appendChild(li);
+                    });
+                });
+        }
+
+        function createProject() {
+            const name = document.getElementById('project-name').value;
+            const jiraId = document.getElementById('project-jira-id').value;
+            fetch('/api/projects', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name, jira_id: jiraId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadProjects();
+                document.getElementById('project-name').value = '';
+                document.getElementById('project-jira-id').value = '';
+            });
+        }
+
+        function createTimeEntry() {
+            const projectId = document.getElementById('entry-project-id').value;
+            const startTime = document.getElementById('entry-start-time').value;
+            const endTime = document.getElementById('entry-end-time').value;
+            const duration = document.getElementById('entry-duration').value;
+            fetch('/api/time_entries', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    project_id: projectId,
+                    start_time: startTime,
+                    end_time: endTime,
+                    duration: duration
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadTimeEntries();
+                document.getElementById('entry-project-id').value = '';
+                document.getElementById('entry-start-time').value = '';
+                document.getElementById('entry-end-time').value = '';
+                document.getElementById('entry-duration').value = '';
+            });
+        }
+
+        // Load data when page loads
+        window.onload = function() {
+            loadProjects();
+            loadTimeEntries();
+        };
+    </script>
+</body>
+</html>

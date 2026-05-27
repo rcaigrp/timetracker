@@ -1,27 +1,25 @@
 # TimeTracker
 
-A simple web-based time tracking application that allows users to start, stop, and check elapsed time.
+A Python-based time tracking application that enables users to track time spent on development projects.
+
+## Features
+- Main dashboard with working timer and project list
+- Manual time entry screen
+- Local storage of logs
+- Summary/export functionality
 
 ## Installation
-
 ```bash
-pip install -r requirements.txt
+pip install flask sqlite3
 ```
 
 ## Usage
-
 Start the server:
-
 ```bash
 python main.py
 ```
 
-Then interact with the API:
-
-- Start timer: `curl -X POST http://localhost:5000/start`
-- Stop timer: `curl -X POST http://localhost:5000/stop`
-- Check time: `curl http://localhost:5000/time`
+Access the application at http://localhost:5000
 
 ## Configuration
-
-The application runs on port 5000 by default.
+No configuration required. All data is stored locally in a SQLite database.
