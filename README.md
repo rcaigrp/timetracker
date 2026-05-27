@@ -1,37 +1,19 @@
 # TimeTracker
 
-A simple time tracking application that allows users to create projects, track time spent on each project, and manage Jira integration settings.
+A simple time tracking application that records start and stop times for tasks.
 
 ## Installation
 
 ```bash
-pip install flask
+pip install flask requests
 ```
 
 ## Usage
-
-Run the application:
 
 ```bash
 python app.py
 ```
 
-The application will be available at http://localhost:5000
-
-## API Endpoints
-
-- `GET /` - Dashboard
-- `POST /projects` - Create a new project
-- `GET /projects` - List all projects
-- `POST /projects/{id}/start` - Start timer for a project
-- `POST /projects/{id}/stop` - Stop timer for a project
-- `GET /projects/{id}/timer` - Get timer data for a project
-- `POST /settings` - Set Jira settings
-- `GET /settings` - Get current Jira settings
-
 ## Configuration
 
-The application stores its data in JSON files:
-- `projects.json` - Stores project information
-- `timers.json` - Stores timer data
-- `settings.json` - Stores Jira integration settings
+No configuration required. All data is stored in a local JSON file called `time_tracker.json`.

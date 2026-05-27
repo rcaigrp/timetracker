@@ -2334,3 +2334,7 @@ Completely rewrote the TimeTracker project using a Python-based approach instead
 ## Turn 6 — Craft (2026-05-27 20:54 UTC)
 
 Completely rewrote the TimeTracker project using a simpler Flask-based approach instead of FastAPI, which was causing dependency issues. Created a new acceptance test suite that properly mocks external dependencies and implemented core functionality for project management, timer operations, and settings handling.
+
+## Turn 7 — Manager (2026-05-27 21:03 UTC)
+
+Fixed timeout issues by rewriting acceptance_tests.py with proper mocking using responses library instead of unittest.mock. The previous tests were calling real HTTP endpoints which caused timeouts. Also fixed app.py by completing the Flask app initialization and adding missing imports.
