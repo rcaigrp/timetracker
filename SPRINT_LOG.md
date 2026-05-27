@@ -2428,3 +2428,7 @@ Pivoting to a Python-based implementation to satisfy Docker constraints. Using F
 ## Turn 6 — Systems (2026-05-27 22:58 UTC)
 
 Fixing Docker environment path mismatch and establishing the Python Flask backend. Removing conflicting Swift references and creating the core application files.
+
+## Turn 7 — Architect (2026-05-27 23:05 UTC)
+
+Switched from Flask to FastAPI and requests to httpx to resolve dependency timeout issues. Rewrote the app to be async and modern, ensuring a robust Jira API integration.

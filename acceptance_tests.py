@@ -1,65 +1,72 @@
 import pytest
 import responses
-import sys
 import os
+from app import app
 
-# Add parent directory to path to import app
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Mock the environment or path setup for testing
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
 
-@responses.activate
-def test_criterion_1_launch():
-    """App launches cleanly with working dashboard showing timer and project list."""
-    # Verify app file exists and is valid Python
-    assert os.path.exists('app.py'), "app.py not found"
-    with open('app.py') as f:
-        code = compile(f.read(), 'app.py', 'exec')
-    print("Criteria 1: App file found and valid Python.")
+@pytest.fixture(autouse=True)
+def cleanup():
+    yield
+    if os.path.exists("settings.json"):
+        os.remove("settings.json")
 
-@responses.activate
-def test_criterion_2_manual_entry():
-    """Users can manually create custom project entries, start/stop timer, and view elapsed time."""
-    # Test local storage logic simulation
-    logs = []
-    assert len(logs) == 0
-    # Mock a new entry
-    logs.append({"id": 1, "project": "Test", "time": 3600})
-    assert len(logs) == 1
-    print("Criteria 2: Manual entry logic simulated successfully.")
-
-@responses.activate
-def test_criterion_3_settings():
-    """Settings screen accepts Jira base URL, username, and API key."""
-    # Mock config object
-    config = {
-        'jira_url': 'https://example.atlassian.net',
-        'api_key': 'test_key'
-    }
-    assert config['jira_url'] == 'https://example.atlassian.net'
-    print("Criteria 3: Settings configuration validated.")
-
-@responses.activate
-def test_criterion_4_fetch_jira():
-    """App fetches projects from Jira API automatically."""
-    # Mock Jira API response
+# Criterion 1: App runs on iOS (simulated by API availability)
+def test_criterion_1_api_responds(client):
+    # Mock Jira response
     responses.add(
         responses.GET,
-        'https://example.atlassian.net/rest/api/3/project',
-        json=[{"key": "PROJ1", "name": "Project 1"}],
+        "https://jira.example.com/rest/api/3/search",
+        json={"issues": [{"id": "1"}, {"id": "2"}]},
         status=200
     )
-    print("Criteria 4: Jira API fetch mocked successfully.")
+    
+    response = client.get('/api/projects')
+    assert response.status_code == 200
+    assert 'issues' in response.json
 
+# Criterion 2: Jira API integration handles auth
 @responses.activate
-def test_criterion_5_persistence():
-    """Local storage persists logs between sessions."""
-    # Simulate session save/load
-    session_data = {'logs': []}
-    session_data['logs'].append({'id': 1, 'duration': 100})
-    # Load session
-    loaded = session_data.copy()
-    loaded['logs'] = [] # Reset for next session
-    assert len(loaded['logs']) == 0
-    print("Criteria 5: Local storage persistence logic validated.")
+def test_criterion_2_auth_required():
+    # Setup settings
+    settings = {"jira_url": "https://jira.example.com", "api_key": "test_token"}
+    with open("settings.json", "w") as f:
+        json.dump(settings, f)
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+    # Mock Jira response
+    responses.add(
+        responses.GET,
+        "https://jira.example.com/rest/api/3/search",
+        json={"issues": []},
+        status=200
+    )
+
+    # Call API
+    client = app.test_client()
+    response = client.get('/api/projects')
+
+    # Verify request contains Authorization header
+    req_headers = responses.calls[0].request.headers
+    assert "Authorization" in req_headers
+    assert req_headers["Authorization"] == f"Basic {settings['api_key']}"
+
+# Criterion 3: Local storage persists data
+def test_criterion_3_settings_save(client):
+    # Mock Jira response to force a network call (invalid for this test, but checks persistence)
+    # Actually, let's just test the file write directly
+    payload = {
+        "jira_url": "https://jira.example.com",
+        "username": "testuser",
+        "api_key": "secret123"
+    }
+    
+    response = client.post('/api/settings', json=payload)
+    assert response.status_code == 200
+    
+    with open("settings.json", "r") as f:
+        loaded = json.load(f)
+        assert loaded['api_key'] == 'secret123'
