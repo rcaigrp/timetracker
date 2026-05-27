@@ -2338,3 +2338,7 @@ Completely rewrote the TimeTracker project using a simpler Flask-based approach 
 ## Turn 7 — Manager (2026-05-27 21:03 UTC)
 
 Fixed timeout issues by rewriting acceptance_tests.py with proper mocking using responses library instead of unittest.mock. The previous tests were calling real HTTP endpoints which caused timeouts. Also fixed app.py by completing the Flask app initialization and adding missing imports.
+
+## Turn 8 — Craft (2026-05-27 21:06 UTC)
+
+I'm implementing the missing Flask app initialization in app.py with proper imports, app creation, and route definitions for start, stop, and list endpoints. I'll ensure it handles JSON requests and responses correctly while following the project's requirements.
