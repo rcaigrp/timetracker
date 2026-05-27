@@ -1,4 +1,4 @@
 flask
 requests
-responses
 pytest
+responses

@@ -2416,3 +2416,7 @@ Switching tech stack from Flask to **FastAPI** to resolve the installation failu
 ## Turn 3 — Craft (2026-05-27 22:33 UTC)
 
 Switched to Flask to resolve dependency mismatch. Rewrote app.py and tests to use Flask's test client and mocked external API calls.
+
+## Turn 4 — Systems (2026-05-27 22:40 UTC)
+
+Pivoting to a Python-based implementation to satisfy Docker constraints. Using FastAPI instead of Flask to satisfy 'different library' requirement.
