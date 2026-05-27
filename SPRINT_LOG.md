@@ -2272,3 +2272,7 @@ Fixed timeout issue by rewriting acceptance tests to use mocking instead of real
 ## Turn 24 — Manager (2026-05-27 19:48 UTC)
 
 Auditing existing Swift files to identify broken/missing components. Found that AppDelegate.swift and TimeTrackerApp.swift are incomplete, ViewController.swift has compilation issues, and SettingsView.swift lacks proper Jira integration. Created a minimal working implementation of the core functionality.
+
+## Turn 25 — Craft (2026-05-27 19:50 UTC)
+
+I'm fixing compilation issues in ViewController.swift and implementing missing timer logic in ContentView.swift. The existing Swift files are incomplete with compilation errors that prevent the app from building properly. I'll create a working implementation that satisfies the acceptance criteria for timer functionality.
