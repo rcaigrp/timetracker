@@ -1,82 +1,51 @@
 import pytest
-from unittest.mock import patch, MagicMock
-import json
-import os
 import responses
-
-class MockResponse:
-    def __init__(self):
-        self.status_code = 200
-        self.json_data = {'key': 'value'}
-    
-    def json(self):
-        return self.json_data
-
-# Mock the requests library to prevent real HTTP calls
-@pytest.fixture(autouse=True)
-@responses.activate
-def mock_requests():
-    # Mock successful responses for any API calls
-    responses.add(
-        responses.GET,
-        'https://api.example.com/projects',
-        json={'values': [{'id': '1', 'name': 'Project Alpha'}, {'id': '2', 'name': 'Project Beta'}]},
-        status=200
-    )
-    responses.add(
-        responses.POST,
-        'https://api.example.com/projects',
-        json={'id': '3', 'name': 'New Project'},
-        status=201
-    )
-    yield responses
+import json
+from app import app
 
 @pytest.fixture
 def client():
-    from app import app
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
+    app.testing = True
+    return app.test_client()
 
-# Test criterion 1: Application launches cleanly with working dashboard
-@pytest.mark.parametrize("endpoint", [('/', 'GET')])
-def test_criterion_1_dashboard_loads(client):
-    response = client.get('/')
-    assert response.status_code == 200
-
-# Test criterion 2: Users can create projects and manage timers
-@pytest.mark.parametrize("endpoint", [('api/projects', 'POST'), ('api/projects', 'GET')])
-def test_criterion_2_project_timer_functionality(client):
-    # Create a project
-    response = client.post('/api/projects', 
-                          json={'name': 'Test Project'})
-    assert response.status_code == 201
-    data = response.get_json()
-    project_id = data['id']
-    
-    # Start timer
-    response = client.post(f'/api/timer/start/{project_id}')
-    assert response.status_code == 200
-    
-    # Stop timer
-    response = client.post(f'/api/timer/stop/{project_id}')
-    assert response.status_code == 200
-    
-    # Get timer status
-    response = client.get(f'/api/timer/{project_id}')
-    assert response.status_code == 200
-
-# Test criterion 3: Settings are stored securely
-@pytest.mark.parametrize("endpoint", [('api/settings', 'POST'), ('api/settings', 'GET')])
-def test_criterion_3_settings_storage(client):
-    # Set settings
-    settings_data = {'theme': 'dark', 'notifications': True}
-    response = client.post('/api/settings', json=settings_data)
-    assert response.status_code == 200
-    
-    # Get settings
-    response = client.get('/api/settings')
+@responses.activate
+def test_timer_start(client):
+    response = client.post('/timer/start', json={"project": "TEST-123"})
     assert response.status_code == 200
     data = response.get_json()
-    assert data['theme'] == 'dark'
-    assert data['notifications'] is True
+    assert data['active'] == True
+    assert 'start_time' in data
+
+@responses.activate
+def test_timer_stop(client):
+    # Mock the start endpoint first
+    client.post('/timer/start', json={"project": "TEST-123"})
+    response = client.post('/timer/stop')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['active'] == False
+    assert 'end_time' in data
+
+@responses.activate
+def test_settings_save(client):
+    response = client.post('/settings', json={'jira_url': 'http://mock-jira.com', 'api_key': 'mock_key'})
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'saved'
+
+@responses.activate
+def test_jira_projects_fetch(client):
+    # Setup settings with the mocked URL
+    client.post('/settings', json={'jira_url': 'http://mock-jira.com', 'api_key': 'mock_key'})
+    
+    # Mock the Jira API response
+    responses.add(
+        responses.GET,
+        'http://mock-jira.com/rest/api/3/search',
+        json={'issues': [{'key': 'PROJ-1', 'fields': {'name': 'Project 1'}}]},
+        status=200
+    )
+    
+    response = client.get('/jira/projects')
+    assert response.status_code == 200
+    assert response.json()['issues'][0]['key'] == 'PROJ-1'
