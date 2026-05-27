@@ -1,24 +1,19 @@
-# TimeTracker
+# Time Tracker
 
-A Python web application that enables users to track time spent on development projects through manual entries with local storage persistence.
-
-## Features
-- Web interface for time tracking
-- Manual project entry with start/stop timer
-- Local storage of logs between sessions
-- Summary view of tracked time
+Tracks time spent on tasks with start and stop functionality.
 
 ## Installation
+
 ```bash
-pip install flask
+swift build
 ```
 
 ## Usage
-Run the application:
+
 ```bash
-python app.py
+swift run
 ```
-Then visit `http://localhost:5000` in your browser.
 
 ## Configuration
-No configuration needed. All data is stored locally in `timer_data.json`.
+
+No configuration required.

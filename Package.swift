@@ -1,32 +1,21 @@
-// swift-tools-version:5.9
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
     name: "TimeTracker",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v14)
     ],
     products: [
-        .library(
-            name: "TimeTrackerLib",
-            targets: ["TimeTrackerLib"]
-        ),
-        .executable(
-            name: "timetracker",
-            targets: ["TimeTracker"]
-        )
+        .executable(name: "TimeTracker", targets: ["TimeTracker"])
     ],
-    dependencies: [
-        // Add any dependencies here
-    ],
+    dependencies: [],
     targets: [
         .target(
-            name: "TimeTrackerLib",
-            dependencies: []
-        ),
-        .executableTarget(
             name: "TimeTracker",
-            dependencies: ["TimeTrackerLib"]
+            dependencies: [],
+            path: ".",
+            exclude: ["Info.plist"]
         )
     ]
 )

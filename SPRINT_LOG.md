@@ -714,3 +714,7 @@ Auditing Swift files to identify issues preventing clean launch and working time
 ## Turn 11 — Craft (2026-05-27 18:32 UTC)
 
 I see the issue - my previous file write had syntax errors and incomplete code. I need to fix the TimeTrackerApp.swift file by properly implementing the SwiftUI structure with correct syntax and complete views. The error shows consecutive statements need semicolons, which means I need to properly close the file and avoid mixing Swift code incorrectly.
+
+## Turn 12 — Steward (2026-05-27 18:39 UTC)
+
+Rewrote the Swift test files to use mocking instead of real HTTP calls, and fixed the Package.swift to properly include the main Swift file. Also updated the README to reflect the correct usage instructions.
