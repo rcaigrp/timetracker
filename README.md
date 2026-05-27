@@ -12,7 +12,7 @@ A native iOS application that enables users to track time spent on development p
 
 ## Tech Stack
 - SwiftUI for UI
-- SwiftData for local storage
+- UIKit for iOS target
 - URLSession for API calls with rate limit handling
 
 ## Development Plan

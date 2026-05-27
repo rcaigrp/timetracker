@@ -1,0 +1,23 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/master.swiftdeps"
+  },
+  "/workspace/projects/TimeTracker/Sources/TimeTracker/App.swift": {
+    "dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/App.d",
+    "object": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/App.swift.o",
+    "swiftmodule": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/App~partial.swiftmodule",
+    "swift-dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/App.swiftdeps"
+  },
+  "/workspace/projects/TimeTracker/Sources/TimeTracker/DashboardView.swift": {
+    "dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/DashboardView.d",
+    "object": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/DashboardView.swift.o",
+    "swiftmodule": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/DashboardView~partial.swiftmodule",
+    "swift-dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/DashboardView.swiftdeps"
+  },
+  "/workspace/projects/TimeTracker/Sources/TimeTracker/TimerService.swift": {
+    "dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.d",
+    "object": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swift.o",
+    "swiftmodule": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService~partial.swiftmodule",
+    "swift-dependencies": "/workspace/projects/TimeTracker/.build/x86_64-unknown-linux-gnu/debug/TimeTracker.build/TimerService.swiftdeps"
+  }
+}

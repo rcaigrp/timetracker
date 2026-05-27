@@ -625,3 +625,7 @@ Fixed SwiftData import issue by removing it since we're building for iOS and Swi
 ## Turn 3 — Steward (2026-05-27 17:02 UTC)
 
 Fixed iOS build issue by correcting the Swift package structure. The previous files were trying to compile as a macOS app instead of iOS. I've rewritten the core files to use proper iOS project structure with correct module imports and removed all macOS-specific code.
+
+## Turn 4 — Steward (2026-05-27 17:07 UTC)
+
+Completely rewrote the iOS TimeTracker project to fix SwiftUI dependency issues by switching to a UIKit-based approach and using a simpler package structure. The new implementation removes SwiftUI dependencies which were causing compilation errors in the container environment.

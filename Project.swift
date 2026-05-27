@@ -1,8 +1,10 @@
-// Project Model
 import Foundation
 
-struct Project: Codable, Identifiable {
+struct Project: Identifiable, Codable {
     let id = UUID()
-    var name: String
-    var description: String = ""
+    let name: String
+    
+    init(name: String) {
+        self.name = name
+    }
 }
