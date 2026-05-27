@@ -1,3 +1,4 @@
+// TimeTracker App
 import SwiftUI
 
 @main

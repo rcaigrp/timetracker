@@ -1,20 +1,46 @@
+// Dashboard View
 import SwiftUI
-import SwiftData
+
+class TimeTrackerViewModel: ObservableObject {
+    @Published var timerIsRunning = false
+    @Published var elapsedTime = 0
+    @Published var projects: [Project] = []
+    
+    func startTimer() {
+        timerIsRunning = true
+    }
+    
+    func stopTimer() {
+        timerIsRunning = false
+    }
+}
 
 struct DashboardView: View {
-    @StateObject var viewModel = TimerViewModel()
-    @Environment(\.modelContext) private var context
+    @StateObject private var viewModel = TimeTrackerViewModel()
     
     var body: some View {
-        List {
-            Section(header: Text("Active Timer")) {
-                TimerView(viewModel: viewModel)
-            }
-            Section(header: Text("Recent Entries")) {
-                ForEach(viewModel.recentEntries) { entry in
-                    Text(entry.startTime.description)
+        VStack {
+            Text("Time Tracker Dashboard")
+                .font(.largeTitle)
+            
+            TimerView(viewModel: viewModel)
+            
+            Button(action: {
+                if viewModel.timerIsRunning {
+                    viewModel.stopTimer()
+                } else {
+                    viewModel.startTimer()
                 }
+            }) {
+                Text(viewModel.timerIsRunning ? "Stop" : "Start")
             }
         }
+        .padding()
+    }
+}
+
+struct DashboardView_Previews: PreviewProvider {
+    static var previews: some View {
+        DashboardView()
     }
 }

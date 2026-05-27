@@ -1,6 +1,5 @@
+// TimeTracker App
 import SwiftUI
-import SwiftData
-import PythonKit
 
 @main
 struct TimeTrackerApp: App {

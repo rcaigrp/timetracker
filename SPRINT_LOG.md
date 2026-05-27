@@ -621,3 +621,7 @@ Auditing existing TimeTracker project files to understand current state and iden
 ## Turn 2 — Craft (2026-05-27 16:58 UTC)
 
 Fixed SwiftData import issue by removing it since we're building for iOS and SwiftData isn't available in this context. Also corrected the ViewModel to use proper Swift syntax without SwiftData dependencies.
+
+## Turn 3 — Steward (2026-05-27 17:02 UTC)
+
+Fixed iOS build issue by correcting the Swift package structure. The previous files were trying to compile as a macOS app instead of iOS. I've rewritten the core files to use proper iOS project structure with correct module imports and removed all macOS-specific code.

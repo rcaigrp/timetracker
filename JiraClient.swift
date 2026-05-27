@@ -1,30 +1,23 @@
+// Jira Client
 import Foundation
 
-protocol JiraClientProtocol {
-    func fetchProjects(completion: @escaping (Result<[String], Error>) -> Void)
-    func fetchIssues(completion: @escaping (Result<[String], Error>) -> Void)
-}
-
-class JiraClient: JiraClientProtocol {
-    var baseURL: String
-    var username: String
-    var apiKey: String
+class JiraClient {
+    private let baseURL: String
+    private let username: String
+    private let apiToken: String
     
-    init(baseURL: String, username: String, apiKey: String) {
+    init(baseURL: String, username: String, apiToken: String) {
         self.baseURL = baseURL
         self.username = username
-        self.apiKey = apiKey
+        self.apiToken = apiToken
     }
     
-    func fetchProjects(completion: @escaping (Result<[String], Error>) -> Void) {
-        let url = URL(string: "\(baseURL)/rest/api/2/project")!
-        // In real Swift, use URLSession
-        // For architecture, we define the contract
-        // Mocked here for Swift preview simulation
-        completion(.success([]))
-    }
-    
-    func fetchIssues(completion: @escaping (Result<[String], Error>) -> Void) {
-        completion(.success([]))
+    func fetchProjects(completion: @escaping (Result<[Project], Error>) -> Void) {
+        // Mock implementation for now
+        let mockProjects = [
+            Project(name: "Project A"),
+            Project(name: "Project B")
+        ]
+        completion(.success(mockProjects))
     }
 }
