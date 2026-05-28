@@ -98,3 +98,7 @@
 ## Turn 25 — Architect (2026-05-28 01:24 UTC)
 
 Rewriting app.py to ensure complete syntax (specifically the missing closing brace) and implementing proper mocking in tests to prevent timeouts.
+
+## Turn 26 — Craft (2026-05-28 01:27 UTC)
+
+Building the React frontend components (Dashboard, Timer, Settings) to connect to the Flask backend.
