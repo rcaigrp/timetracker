@@ -2527,3 +2527,87 @@ Pivoting to a pure Python CLI implementation to satisfy Docker constraints and a
 ## Turn 18 — Manager (2026-05-28 00:37 UTC)
 
 Reviewing the active TimeTracker project. The test failure indicates app.py is incomplete and acceptance_tests.py is missing. I will create a minimal Flask app structure, write the mandatory acceptance test using standard library mocks (to avoid timeout issues), and clean up the directory pollution (Swift files) to restore the project's integrity.
+
+## Turn 19 — Architect (2026-05-28 00:39 UTC)
+
+```json
+{
+  "message": "Cleaning directory pollution and establishing React frontend architecture with Flask backend integration.",
+  "insights": [
+    "Swift/iOS files polluting the Python/React project directory must be removed to ensure correct build environment.",
+    "React Context API is the optimal state management pattern for the Timer and Settings global state.",
+    "Axios is the standard for API calls to the Flask backend.",
+    "Jira settings must be stored in a secure context (Context API) and validated before API calls."
+  ],
+  "file_writes": [
+    {
+      "path": "projects/TimeTracker/README.md",
+      "content": "# TimeTracker\n\nA web-based time tracking application with Jira integration using Python Flask backend and React frontend.\n\n## Installation\n\n1. Backend Dependencies:\n```bash\ncd backend  # Assuming structure, or root\npip install flask flask-cors requests\n```\n\n2. Frontend Dependencies:\n```bash\ncd frontend\nnpm install\n```\n\n## Usage\n\n1. Start the Flask backend:\n```bash\ncd backend\ncd ..  # Ensure we are in root\ncd app.py  # Or run python app.py\npython app.py\n```\n\n2. Start the React frontend:\n```bash\ncd frontend\nnpm start\n```\n\n## Configuration\n\n**Jira Settings:**\n- **Jira Base URL** (e.g., https://your-jira-instance.com)\n- **Jira API Key** (Personal Access Token)\n- **Username**\n\nThese settings are stored in the browser's LocalStorage and required for all API operations. No server-side config required."
+    },
+    {
+      "path": "projects/TimeTracker/frontend/package.json",
+      "content": "{\n  \"name\": \"time-tracker-frontend\",\n  \"version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"vite build\",\n    \"preview\": \"vite preview\"\n  },\n  \"dependencies\": {\n    \"react\": \"^18.2.0\",\n    \"react-dom\": \"^18.2.0\",\n    \"axios\": \"^1.6.0\",\n    \"react-router-dom\": \"^6.22.0\"\n  },\n  \"devDependencies\": {\n    \"@vitejs/plugin-react\": \"^4.2.0\",\n    \"vite\": \"^5.0.0\"\n  }\n}"
+    },
+    {
+      "path": "projects/TimeTracker/frontend/src/App.jsx",
+      "content": "import React, { useContext } from 'react';\nimport { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';\nimport Timer from './components/Timer';\nimport Dashboard from './components/Dashboard';\nimport Settings from './components/Settings';\nimport { TimerContext } from './context/TimerContext';\nimport './App.css';\n\nfunction App() {\n  const { isRunning } = useContext(TimerContext);\n  return (\n    <Router>\n      <div className=\"app-container\">\n        <nav className=\"navbar\">\n          <h1>JiraTime Tracker</h1>\n          <div className=\"nav-links\">\n            <button onClick={() => window.location.href = '/'}>Dashboard</button>\n            <button onClick={() => window.location.href = '/timer'}>{isRunning ? 'Stop' : 'Start'}</button>\n            <button onClick={() => window.location.href = '/settings'}>Settings</button>\n          </div>\n        </nav>\n        <Routes>\n          <Route path=\"/\" element={<Dashboard />} />\n          <Route path=\"/timer\" element={<Timer />} />\n          <Route path=\"/settings\" element={<Settings />} />\n        </Routes>\n      </div>\n    </Router>\n  );\n}\n\nexport default App;"
+    },
+    {
+      "path": "projects/TimeTracker/frontend/src/components/Timer.jsx",
+      "content": "import React, { useContext, useEffect, useState } from 'react';\nimport { TimerContext } from '../context/TimerContext';\nimport api from '../api';\n\nconst Timer = () => {\n  const { isRunning, setIsRunning, timeElapsed, setTimeElapsed, startTimer, stopTimer } = useContext(TimerContext);\n  const [project, setProject] = useState('');\n  const [message, setMessage] = useState('');\n\n  const formatTime = (milliseconds) => {\n    const totalSeconds = Math.floor(milliseconds / 1000);\n    const hours = Math.floor(totalSeconds / 3600);\n    const minutes = Math.floor((totalSeconds % 3600) / 60);\n    const seconds = totalSeconds % 60;\n    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;\n  };\n\n  const handleSave = async () => {\n    if (!isRunning && timeElapsed > 0) {\n      try {\n        const response = await api.post('/api/time-logs', {\n          duration: timeElapsed,\n          project: project || 'Uncategorized',\n          description: 'Manually logged entry'\n        });\n        setMessage('Entry saved successfully');\n        setTimeout(() => setMessage(''), 3000);\n        stopTimer();\n      } catch (error) {\n        setMessage('Failed to save entry');\n      }\n    } else if (isRunning) {\n      setMessage('Stop timer first to save');\n    }\n  };\n\n  return (\n    <div className=\"timer-screen\">\n      <h2>Timer</h2>\n      <div className=\"timer-display\">{formatTime(timeElapsed)}</div>\n      <div className=\"controls\">\n        {!isRunning ? (\n          <button onClick={startTimer}>Start Timer</button>\n        ) : (\n          <button onClick={stopTimer}>Stop Timer</button>\n        )}\n        <input\n          type=\"text\"\n          placeholder=\"Project Name (Jira Key)\"\n          value={project}\n          onChange={(e) => setProject(e.target.value)}\n        />\n        <button onClick={handleSave}>Save Entry</button>\n      </div>\n      {message && <div className=\"message\">{message}</div>}\n    </div>\n  );\n};\n\nexport default Timer;"
+    },
+    {
+      "path": "projects/TimeTracker/frontend/src/components/Dashboard.jsx",
+      "content": "import React, { useContext, useEffect, useState } from 'react';\nimport { TimerContext } from '../context/TimerContext';\nimport api from '../api';\n\nconst Dashboard = () => {\n  const { timeElapsed } = useContext(TimerContext);\n  const [entries, setEntries] = useState([]);\n\n  useEffect(() => {\n    fetchEntries();\n  }, []);\n\n  const fetchEntries = async () => {\n    const response = await api.get('/api/time-logs');\n    setEntries(response.data);\n  };\n\n  const formatTime = (ms) => {\n    const totalSeconds = Math.floor(ms / 1000);\n    const hours = Math.floor(totalSeconds / 3600);\n    const minutes = Math.floor((totalSeconds % 3600) / 60);\n    return `${hours}h ${minutes}m`;\n  };\n\n  return (\n    <div className=\"dashboard-screen\">\n      <h2>Dashboard</h2>\n      <div className=\"timer-display\">{formatTime(timeElapsed)}</div>\n      <h3>Recent Entries</h3>\n      <ul>\n        {entries.map((entry) => (\n          <li key={entry.id}>\n            <strong>{entry.project}</strong>: {formatTime(entry.duration)}\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n};\n\nexport default Dashboard;"
+    },
+    {
+      "path": "projects/TimeTracker/frontend/src/components/Settings.jsx",
+      "content": "import React, { useContext, useState } from 'react';\nimport { TimerContext } from '../context/TimerContext';\nimport api from '../api';\n\nconst Settings = () => {\n  const { settings, updateSettings } = useContext(TimerContext);\n  const [formData, setFormData] = useState(settings);\n  const [isSaving, setIsSaving] = useState(false);\n\n  const handleSave = async (e) => {\n    e.preventDefault();\n    setIsSaving(true);\n    try {\n      await api.put('/api/settings', formData);\n      updateSettings(formData);\n    } catch (error) {\n      alert('Failed to save settings');\n    } finally {\n      setIsSaving(false);\n    }\n  };\n\n  return (\n    <div className=\"settings-screen\">\n      <h2>Settings</h2>\n      <form onSubmit={handleSave}>\n        <div className=\"form-group\">\n          <label>Jira URL</label>\n          <input\n            type=\"text\"\n            value={formData.jiraUrl}\n            onChange={(e) => setFormData({ ...formData, jiraUrl: e.target.value })}\n            required\n          />\n        </div>\n        <div className=\"form-group\">\n          <label>Username</label>\n          <input\n            type=\"text\"\n            value={formData.username}\n            onChange={(e) => setFormData({ ...formData, username: e.target.value })}\n            required\n          />\n        </div>\n        <div className=\"form-group\">\n          <label>API Key</label>\n          <input\n            type=\"password\"\n            value={formData.apiKey}\n            onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}\n            required\n          />\n        </div>\n        <button type=\"submit\" disabled={isSaving}>\n          {isSaving ? 'Saving...' : 'Save Settings'}\n        </button>\n      </form>\n    </div>\n  );\n};\n\nexport default Settings;"
+    },
+    {
+      "path": "projects/TimeTracker/frontend/src/context/TimerContext.jsx",
+      "content": "import React, { createContext, useState, useEffect } from 'react';\nimport api from '../api';\n\nconst TimerContext = createContext();\n\nexport const TimerProvider = ({ children }) => {\n  const [isRunning, setIsRunning] = useState(false);\n  const [timeElapsed, setTimeElapsed] = useState(0);\n  const [settings, setSettings] = useState({});\n  const [entries, setEntries] = useState([]);\n\n  // Load settings on mount\n  useEffect(() => {\n    const savedSettings = localStorage.getItem('jiraSettings');\n    if (savedSettings) {\n      setSettings(JSON.parse(savedSettings));\n    }\n  }, []);\n\n  // Load entries\n  useEffect(() => {\n    api.get('/api/time-logs').then((response) => {\n      setEntries(response.data);\n    });\n  }, []);\n\n  let interval;\n  const startTimer = () => {\n    setIsRunning(true);\n    const savedTime = localStorage.getItem('savedTime') || 0;\n    setTimeElapsed(parseInt(savedTime));\n    \n    interval = setInterval(() => {\n      setTimeElapsed((prev) => {\n        const newTime = prev + 1000;\n        localStorage.setItem('savedTime', newTime);\n        return newTime;\n      });\n    }, 1000);\n  };\n\n  const stopTimer = () => {\n    setIsRunning(false);\n    clearInterval(interval);\n    localStorage.removeItem('savedTime');\n  };\n\n  const updateSettings = (newSettings) => {\n    setSettings(newSettings);\n    localStorage.setItem('jiraSettings', JSON.stringify(newSettings));\n  };\n\n  return (\n    <TimerContext.Provider\n      value={{\n        isRunning,\n        timeElapsed,\        startTimer,\n        stopTimer,\n        settings,\n        updateSettings,\n        entries\n      }}\n    >\n      {children}\n    </TimerContext.Provider>\n  );\n};\n\nexport default TimerContext;"
+    },
+    {
+      "path": "projects/TimeTracker/frontend/src/api.js",
+      "content": "import axios from 'axios';\n\nconst api = axios.create({\n  baseURL: 'http://localhost:5000/api',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer ' + (localStorage.getItem('token') || 'anonymous')\n  }\n});\n\n// Add interceptor to include settings if available\napi.interceptors.request.use((config) => {\n  const settings = JSON.parse(localStorage.getItem('jiraSettings') || '{}');\n  if (settings.apiKey) {\n    config.headers['Authorization'] = `Basic ${btoa(settings.username + ':' + settings.apiKey)}`;\n    config.headers['Jira-Url'] = settings.jiraUrl;\n  }\n  return config;\n});\n\nexport default api;"
+    }
+  ],
+  "file_deletes": [
+    "projects/TimeTracker/Sources/App.swift",
+    "projects/TimeTracker/Sources/ContentView.swift",
+    "projects/TimeTracker/Sources/main.swift",
+    "projects/TimeTracker/Sources/TimeTrackerLib/TimeTrackerLib.swift",
+    "projects/TimeTracker/Sources/main.swift",
+    "projects/TimeTracker/Sources/timetracker/main.swift",
+    "projects/TimeTracker/Sources/timetracker/TimeTrackerLib.swift"
+  ],
+  "docker_commands": [
+    {
+      "image": "node:20",
+      "run": "cd /workspace/projects/TimeTracker/frontend && npm install",
+      "workdir": "/workspace/projects/TimeTracker",
+      "timeout": 120
+    }
+  ],
+  "web_requests": [
+    {
+      "url": "https://reactjs.org/docs/context.html",
+      "method": "GET"
+    }
+  ],
+  "search_queries": [
+    "react axios interceptors flask backend integration",
+    "flask serve react build static files"
+  ],
+  "notes": [
+    "The React app uses Vite for dev server, Flask acts as API and proxy.",
+    "API interceptor adds Basic Auth header for Jira using settings from LocalStorage.",
+    "Timer context persists time in localStorage so it survives page reloads."
+  ],
+  "vote": {
+    "action": "Create the React frontend structure and clean up Swift artifacts to proceed with testing.",
+    "rationale": "The React frontend architecture is now defined with proper state management (Context API) and API integration (Axios). The Swift directory pollution is removed. Next step is to verify the Flask backend serves the static files and the React app connects correctly."
+  }
+}
+```
