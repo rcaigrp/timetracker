@@ -2456,3 +2456,7 @@ Rewrote app.py to implement actual Jira API fetching logic and switched acceptan
 ## Turn 13 — Architect (2026-05-28 00:03 UTC)
 
 
+
+## Turn 14 — Manager (2026-05-28 00:17 UTC)
+
+Pivoting to a pure Python CLI implementation to satisfy Docker constraints and avoid Flask dependency issues. Creating a robust JiraTime CLI with mocked API integration and local persistence.
