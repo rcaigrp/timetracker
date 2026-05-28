@@ -5,7 +5,7 @@ A simple time tracking application that records start and stop times for tasks.
 ## Installation
 
 ```bash
-pip install flask requests pytest responses
+pip install flask requests flask-cors
 ```
 
 ## Usage
@@ -16,4 +16,13 @@ python app.py
 
 ## Configuration
 
-No configuration required. All data is stored in a local JSON file called `time_tracker.json`.
+Create a `settings.json` file in the project root:
+```json
+{
+  "jira_url": "https://your-jira-instance.atlassian.net",
+  "api_key": "your-api-key",
+  "username": "your-username"
+}
+```
+
+Data is stored in `settings.json` for configuration.
