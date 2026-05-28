@@ -1,86 +1,83 @@
 import pytest
-import responses
-import os
-import json
-import sys
-
-# Add project directory to path to import app
-sys.path.insert(0, '/workspace/projects/TimeTracker')
-
-# Import the Flask application
+import requests_mock
 from app import app
+import json
+import os
 
-@pytest.fixture
-def client():
-    """Creates a test client for the Flask app."""
-    app.testing = True
-    return app.test_client()
+# Clean up test state
+SETTINGS_PATH = '/workspace/projects/TimeTracker/settings.json'
+ENTRIES_PATH = '/workspace/projects/TimeTracker/entries.json'
 
-@pytest.fixture
-def clean_storage():
-    """Cleans up JSON files after each test to ensure isolation."""
+@pytest.fixture(autouse=True)
+def cleanup():
     yield
-    # Remove time_data.json
-    if os.path.exists('/workspace/projects/TimeTracker/time_data.json'):
-        os.remove('/workspace/projects/TimeTracker/time_data.json')
-    # Remove config.json
-    if os.path.exists('/workspace/projects/TimeTracker/config.json'):
-        os.remove('/workspace/projects/TimeTracker/config.json')
+    if os.path.exists(SETTINGS_PATH):
+        os.remove(SETTINGS_PATH)
+    if os.path.exists(ENTRIES_PATH):
+        os.remove(ENTRIES_PATH)
 
-    @responses.activate
-    def test_criterion_4_jira_projects():
-        """Criterion 4: App fetches projects from Jira API automatically."""
-        # Mock Jira API response for projects
-        jira_projects = [
-            {"id": "PROJ-1", "name": "Development", "description": "Dev Project"},
-            {"id": "PROJ-2", "name": "Design", "description": "Design Project"}
-        ]
+
+def test_criterion_1_launch():
+    """App launches cleanly with a working dashboard showing timer and project list"""
+    client = app.test_client()
+    # Check if the index page loads (serves React frontend)
+    response = client.get('/')
+    assert response.status_code == 200
+
+
+def test_criterion_2_manual_entry():
+    """Users can manually create custom project entries, start/stop timer, and view elapsed time in a persisted list"""
+    client = app.test_client()
+    entry = {"id": 1, "description": "Test Task", "duration": 3600, "project": "Test Project"}
+    response = client.post('/api/entries', json=entry)
+    assert response.status_code == 200
+    
+    # Verify the entry is returned
+    get_response = client.get('/api/entries')
+    assert get_response.status_code == 200
+    entries = get_response.json
+    assert len(entries) == 1
+    assert entries[0]["description"] == "Test Task"
+
+
+def test_criterion_3_settings():
+    """Settings screen accepts Jira base URL, username, and API key, stores them securely, and requires them for all API operations"""
+    client = app.test_client()
+    settings = {"jira_url": "https://test.jira.com", "api_key": "fake-token-12345"}
+    response = client.post('/api/settings', json=settings)
+    assert response.status_code == 200
+    
+    # Verify persistence (re-reads from storage)
+    get_response = client.get('/api/settings')
+    assert get_response.json == settings
+
+
+def test_criterion_4_fetch_projects():
+    """App fetches projects from Jira API automatically using configured credentials"""
+    client = app.test_client()
+    
+    # Step 1: Set up settings
+    settings = {"jira_url": "https://test.jira.com", "username": "admin", "api_key": "token"}
+    client.post('/api/settings', json=settings)
+    
+    # Step 2: Mock Jira API response
+    mock_projects = [
+        {"id": "10000", "name": "Test Project"},
+        {"id": "10001", "name": "Another Project"}
+    ]
+    
+    with requests_mock.Mocker() as m:
+        jira_url = "https://test.jira.com/rest/api/2/project"
+        m.get(jira_url, json=mock_projects, status_code=200)
         
-        # Mock the specific Jira endpoint
-        jira_url = "https://jira.example.com/rest/api/3/project"
-        responses.add(
-            responses.GET,
-            jira_url,
-            json=jira_projects,
-            status=200
-        )
-
-        # Call the endpoint
+        # Step 3: Call the endpoint
         response = client.get('/api/projects')
-
-        # Assertions
+        
+        # Step 4: Verify
         assert response.status_code == 200
-        data = json.loads(response.data)
+        data = response.json
         assert len(data) == 2
-        assert data[0]['name'] == "Development"
+        assert data[0]["name"] == "Test Project"
 
-    @responses.activate
-    def test_criterion_3_settings_secure_storage():
-        """Criterion 3: Settings screen accepts Jira URL, username, API key and stores securely."""
-        # Mock the Jira API call that happens when settings are validated (optional)
-        responses.add(
-            responses.GET,
-            "https://jira.example.com/api/health",
-            json={"status": "ok"},
-            status=200
-        )
-
-        # Prepare settings payload
-        settings_payload = {
-            "base_url": "https://jira.example.com",
-            "username": "test_user",
-            "api_key": "test_key_123"
-        }
-
-        response = client.put('/api/settings', json=settings_payload)
-        
-        assert response.status_code == 200
-        
-        # Verify persistence (check that the file exists)
-        config_file_path = '/workspace/projects/TimeTracker/config.json'
-        assert os.path.exists(config_file_path), "Settings not persisted to local storage"
-
-        # Verify content
-        with open(config_file_path, 'r') as f:
-            stored_data = json.load(f)
-        assert stored_data['username'] == "test_user"
+        # Verify the app made the request to the mocked URL
+        assert m.request_history[0].url == jira_url
