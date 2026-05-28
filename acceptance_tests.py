@@ -1,63 +1,72 @@
 import pytest
 import responses
-from app import app, CONFIG
-from fastapi.testclient import TestClient
+import os
+import sys
+import json
 
-client = TestClient(app)
+# Ensure we are in the project directory
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from app import app
 
 @pytest.fixture
-def api_client():
-    return client
+def client():
+    app.testing = True
+    return app.test_client()
 
-@responses.activate
-def test_criterion_1_launch_cleanly():
-    resp = responses.get(
-        'http://localhost:5000/api/settings',
-        json={"JIRA_BASE_URL": ""},
-        status=200
-    )
-    response = client.get('/api/settings')
-    assert response.status_code == 200
+class TestAC1Dashboard:
+    def test_app_launches(self, client):
+        result = client.get('/api/config')
+        assert result.status_code == 200
+        json_result = result.get_json()
+        assert json_result == {"logs": [], "settings": {}}
 
-@responses.activate
-def test_criterion_2_manual_entry_and_timer():
-    # Mock the start endpoint
-    responses.post(
-        'http://localhost:5000/api/timer/start',
-        json={'running': True, 'log': {'start': '2023-01-01T00:00:00', 'end': '2023-01-01T00:01:00', 'duration': 60.0, 'project': 'DEV'}},
-        status=200
-    )
-    response = client.get('/api/timer')
-    assert response.status_code == 200
-    assert response.json['running'] == True
-    
-    response = client.post('/api/timer/start')
-    assert response.status_code == 200
-    assert response.json['running'] == True
+class TestAC3Settings:
+    @responses.activate
+    def test_save_jira_settings(self, client):
+        # Mock Jira API call after settings are saved
+        responses.add(
+            responses.GET,
+            'http://jira.example.com/rest/api/2/project',
+            json=[{"id": "PROJ-1", "name": "Test Project", "key": "TEST"}],
+            status=200
+        )
+        response = client.post('/api/config', json={
+            "url": "http://jira.example.com",
+            "username": "user@example.com",
+            "api_key": "secret_token"
+        })
+        assert response.status_code == 200
+        assert response.json['success'] == True
+        # Verify the settings were saved
+        get_resp = client.get('/api/config')
+        assert get_resp.json['jira_url'] == "http://jira.example.com"
+        # Verify the API was called
+        assert len(responses.calls) == 1
 
-def test_criterion_3_settings_storage():
-    data = {
-        'JIRA_BASE_URL': 'https://test.atlassian.net',
-        'JIRA_API_KEY': '12345',
-        'JIRA_USERNAME': 'test@test.com'
-    }
-    response = client.post('/api/settings', json=data)
-    assert response.status_code == 200
-    assert response.json['config']['JIRA_BASE_URL'] == 'https://test.atlassian.net'
+class TestAC4JiraProjects:
+    @responses.activate
+    def test_fetch_jira_projects(self, client):
+        responses.add(
+            responses.GET,
+            'http://jira.example.com/rest/api/2/project',
+            json=[{"id": "PROJ-1", "name": "Test Project", "key": "TEST"}],
+            status=200
+        )
+        response = client.get('/api/jira/projects')
+        assert response.status_code == 200
+        assert len(response.json) == 1
+        assert response.json[0]['name'] == 'Test Project'
 
-@responses.activate
-def test_criterion_4_jira_projects():
-    # Mock the external Jira call
-    responses.add(
-        responses.GET, 
-        'https://test.atlassian.net/rest/api/3/project',
-        json=[{"id": "PROJ1", "name": "Dev", "key": "DEV"}],
-        status=200
-    )
-    # Override config for this test
-    original_url = CONFIG.get('JIRA_BASE_URL')
-    CONFIG['JIRA_BASE_URL'] = 'https://test.atlassian.net'
-    
-    response = client.get('/api/projects')
-    assert response.status_code == 200
-    assert response.json[0]['id'] == 'PROJ1'
+class TestAC5Persistence:
+    def test_logs_persist(self, client):
+        # Start a timer
+        client.post('/api/timer', json={"action": "start", "project": "Proj A", "timestamp": 1000})
+        # Stop it
+        client.post('/api/timer', json={"action": "stop", "timestamp": 2000})
+        
+        # Check persistence
+        logs = client.get('/api/timer').json
+        assert len(logs) == 1
+        assert logs[0]['status'] == 'stopped'
+        assert logs[0]['project'] == 'Proj A'

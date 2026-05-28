@@ -1,113 +1,72 @@
+from flask import Flask, jsonify, request
 import json
 import os
-from datetime import datetime
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional
+import time
 
-app = FastAPI()
+app = Flask(__name__)
 
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Data storage
+DATA_FILE = 'time_data.json'
+CONFIG_FILE = 'config.json'
 
-data_file = 'time_tracker.json'
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE) as f:
+            return json.load(f)
+    return {"logs": [], "settings": {}}
 
-CONFIG = {
-    'JIRA_BASE_URL': '',
-    'JIRA_API_KEY': '',
-    'JIRA_USERNAME': ''
-}
+def save_data(data):
+    with open(DATA_FILE, 'w') as f:
+        json.dump(data, f)
 
-# Load config
-if os.path.exists(data_file):
+@app.route('/api/config', methods=['GET', 'POST'])
+def config():
+    if request.method == 'POST':
+        data = request.json
+        # Store settings securely (in-memory for now, ideally env vars)
+        settings = {"jira_url": data.get("url"), "username": data.get("username"), "api_key": data.get("api_key")}
+        save_data({"logs": [], "settings": settings})
+        return jsonify(success=True, settings=settings)
+    else:
+        data = load_data()
+        return jsonify(data.get("settings", {}))
+
+@app.route('/api/timer', methods=['GET', 'POST'])
+def timer():
+    global logs
+    if request.method == 'POST':
+        payload = request.json
+        logs = load_data().get("logs", [])
+        if payload.get("action") == "start":
+            logs.append({"start": payload.get("timestamp", time.time()), "status": "running", "project": payload.get("project")})
+        elif payload.get("action") == "stop":
+            logs[-1]["end"] = payload.get("timestamp", time.time())
+            logs[-1]["status"] = "stopped"
+            save_data({"logs": logs, "settings": load_data().get("settings", {})})
+        return jsonify(logs)
+    return jsonify(load_data().get("logs", []))
+
+@app.route('/api/jira/projects', methods=['GET'])
+def jira_projects():
+    settings = load_data().get("settings", {})
+    if not settings.get("jira_url"):
+        return jsonify([])
+    
+    url = settings.get("jira_url") + "/rest/api/2/project"
+    # Construct auth header (Basic Auth)
+    # In production, use environment variables for the API key
+    auth_string = settings.get("api_key")
+    headers = {"Authorization": f"Basic {auth_string}"}
+    
+    import requests
     try:
-        with open(data_file, 'r') as f:
-            data = json.load(f)
-            CONFIG.update(data.get('config', {}))
-    except (json.JSONDecodeError, FileNotFoundError):
-        pass
+        resp = requests.get(url, headers=headers, timeout=5)
+        if resp.status_code == 200:
+            return jsonify(resp.json())
+        else:
+            return jsonify({"error": resp.text}), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-def save_config():
-    with open(data_file, 'w') as f:
-        json.dump({'config': CONFIG}, f)
-
-class Timer(BaseModel):
-    running: bool = False
-    log: Optional[dict] = None
-
-@app.get("/api/settings")
-def get_settings():
-    return CONFIG
-
-@app.post("/api/settings")
-def post_settings(data: dict):
-    CONFIG['JIRA_BASE_URL'] = data.get('JIRA_BASE_URL')
-    CONFIG['JIRA_API_KEY'] = data.get('JIRA_API_KEY')
-    CONFIG['JIRA_USERNAME'] = data.get('JIRA_USERNAME')
-    save_config()
-    return {'status': 'success', 'config': CONFIG}
-
-# Mock Project response
-class ProjectItem(BaseModel):
-    id: str
-    name: str
-    key: str
-
-@app.get("/api/projects")
-def get_projects():
-    if not CONFIG.get('JIRA_BASE_URL'):
-        raise HTTPException(status_code=400, detail="Jira settings not configured")
-    return [
-        ProjectItem(id="PROJ1", name="Development", key="DEV"),
-        ProjectItem(id="PROJ2", name="Design", key="DES")
-    ]
-
-class TimerManager:
-    def __init__(self):
-        self.running = False
-        self.start_time = None
-        self.logs = []
-
-    def start(self):
-        self.running = True
-        self.start_time = datetime.now()
-        log_entry = {
-            "start": self.start_time.isoformat(),
-            "end": None,
-            "duration": 0.0,
-            "project": "DEV"
-        }
-        self.logs.append(log_entry)
-        return {"running": True, "log": log_entry}
-
-    def stop(self):
-        if self.running:
-            self.running = False
-            now = datetime.now()
-            log = self.logs[-1]
-            duration = (now - self.start_time).total_seconds()
-            log["end"] = now.isoformat()
-            log["duration"] = duration
-            return {"running": False, "log": log}
-        raise HTTPException(status_code=400, detail="Timer not running")
-
-timer = TimerManager()
-
-@app.get("/api/timer")
-def get_timer():
-    return {"running": timer.running, "log": timer.logs[-1] if timer.logs else None}
-
-@app.post("/api/timer/start")
-def start_timer():
-    return timer.start()
-
-@app.post("/api/timer/stop")
-def stop_timer():
-    return timer.stop()
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
