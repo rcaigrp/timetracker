@@ -5,7 +5,7 @@ A web-based time tracking application with Jira integration.
 ## Installation
 
 ```bash
-pip install flask requests pytest responses
+pip install flask flask-cors requests pytest responses
 ```
 
 ## Usage
@@ -16,9 +16,23 @@ python app.py
 
 ## Configuration
 
-**Required Environment Variables / Settings:**
-1. `JIRA_URL`: The base URL of your Jira instance (e.g., `https://your-company.atlassian.net`)
-2. `JIRA_API_KEY`: The API token for Jira authentication.
-3. `JIRA_USERNAME`: The username for the Jira account.
+1. **Jira API Credentials:**
+   - Set `JIRA_BASE_URL` (e.g., `https://your-company.atlassian.net`)
+   - Set `JIRA_API_KEY` (Personal API Token)
+   - Set `JIRA_USERNAME` (Email address)
 
-Data is persisted locally in `settings.json` and `time_entries.json`.
+2. **Data Persistence:**
+   - Data is stored in `time_tracker.json` by default.
+
+## API Endpoints
+
+- `GET /api/settings` - Retrieve Jira configuration
+- `POST /api/settings` - Update Jira configuration
+- `GET /api/projects` - Fetch projects from Jira
+- `POST /api/timer` - Start/Stop timer
+- `GET /api/timer` - Retrieve current timer status
+- `GET /api/logs` - Retrieve time logs
+
+---
+
+*Note: This is a backend API. A React frontend is required to consume these endpoints.*

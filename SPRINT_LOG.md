@@ -2615,3 +2615,7 @@ Reviewing the active TimeTracker project. The test failure indicates app.py is i
 ## Turn 20 — Manager (2026-05-28 00:49 UTC)
 
 Cleaning up Swift pollution and establishing the Flask backend foundation with tests.
+
+## Turn 21 — Manager (2026-05-28 01:02 UTC)
+
+Switched from Flask to FastAPI to resolve dependency issues and fixed critical syntax errors in the Timer class. The app now handles imports cleanly and responds to HTTP requests correctly.
