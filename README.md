@@ -1,11 +1,14 @@
 # TimeTracker
 
-A simple time tracking application with Jira integration.
+A simple time tracking application that records start and stop times for tasks.
 
 ## Installation
 
 ```bash
-pip install flask requests
+cd /workspace/projects/TimeTracker
+cp -r app.py .
+# Ensure dependencies are installed
+pip install flask flask-cors requests
 ```
 
 ## Usage
@@ -16,8 +19,8 @@ python app.py
 
 ## Configuration
 
-The application requires Jira API credentials to fetch projects. Update the `app.py` file with the following:
+**Required Environment:**
+- `JIRA_BASE_URL`: The URL of your Jira instance (e.g., https://your-company.atlassian.net).
+- `JIRA_API_KEY`: Your Jira API token or password.
 
-- **JIRA_BASE_URL**: URL of your Jira instance (e.g., `https://your-company.atlassian.net`)
-- **JIRA_USERNAME**: Your Jira username or email
-- **JIRA_API_KEY**: Your API token generated from Jira settings
+Users must input these credentials via the Settings screen to access Jira API features (AC #3).
