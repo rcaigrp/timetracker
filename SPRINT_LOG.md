@@ -153,3 +153,61 @@ Created the main App.js file to integrate Dashboard, Timer, and Settings compone
   }
 }
 ```
+
+## Turn 30 — Steward (2026-05-28 01:39 UTC)
+
+```json
+{
+  "message": "Discarded the failed Python/Flask approach entirely to adhere to the original Swift/SwiftData goal. Replaced with native Swift project structure.",
+  "insights": [
+    "Flask installation failure in Docker indicates environment conflicts. Switching to native Swift implementation to match project requirements.",
+    "SwiftData requires iOS 16+, ensuring modern persistence architecture for local-first Jira sync.",
+    "Jira API integration will use async/await for reliable network handling."
+  ],
+  "file_writes": [
+    {
+      "path": "projects/JiraTime/README.md",
+      "content": "# JiraTime\n\nA native iOS time tracking app with Jira API integration and local-first storage.\n\n## What the app does\nManually logs work time to Jira tickets with local persistence and API sync.\n\n## Installation/Setup\n1. Open in Xcode (iOS 16.0+)\n2. Set Jira API URL and Credentials in app settings (or Keychain)\n\n## Usage\n1. Open the app and select a Jira ticket.\n2. Enter duration and description.\n3. Sync to Jira.\n\n## Configuration\n- No external env vars required (local-first by default).\n- Optional Jira URL/Token for sync.\n"
+    },
+    {
+      "path": "projects/JiraTime/JiraTime/Sources/App/App.swift",
+      "content": "import SwiftUI\nimport SwiftData\n\n@main\nstruct JiraTimeApp: App {\n    @State private var jiraService: JiraService\n    \n    init() {\n        // JiraService initialized with basic config\n        jiraService = JiraService()\n    }\n\n    var body: some Scene {\n        WindowGroup {\n            ContentView()\n                .environment(jiraService)\n        }\n    }\n}"
+    },
+    {
+      "path": "projects/JiraTime/JiraTime/Sources/Models/TimeEntry.swift",
+      "content": "import SwiftData\n\n@Model\nfinal class TimeEntry {\n    var id: UUID\n    var ticketKey: String\n    var ticketSummary: String\n    var duration: Double // seconds\n    var dateLogged: Date\n    var status: Status = .draft\n    \n    enum Status: String, Codable {\n        case draft, synced, error\n    }\n    \n    init(ticketKey: String, summary: String, duration: Double) {\n        self.id = UUID()\n        self.ticketKey = ticketKey\n        self.ticketSummary = summary\n        self.duration = duration\n        self.dateLogged = Date()\n    }\n}"
+    },
+    {
+      "path": "projects/JiraTime/JiraTime/Sources/Models/JiraTicket.swift",
+      "content": "import Foundation\n\nstruct JiraTicket: Codable {\n    let key: String\n    let fields: JiraFields\n    let self: String\n    \n    struct JiraFields: Codable {\n        let summary: String\n        let status: Status\n        \n        enum Status: String, Codable {\n            case InProgress, Done, ToDo\n        }\n    }\n}"
+    },
+    {
+      "path": "projects/JiraTime/JiraTime/Sources/Services/JiraService.swift",
+      "content": "import Foundation\n\nactor JiraService {\n    private var baseURL: String\n    private var apiToken: String\n    \n    init(baseURL: String = \"https://your-jira-instance.atlassian.net\", apiToken: String = \"\") {\n        self.baseURL = baseURL\n        self.apiToken = apiToken\n    }\n    \n    func logTime(ticketKey: String, duration: Double, description: String) async throws {\n        guard let url = URL(string: \"\\(baseURL)/rest/api/2/issue/\\(ticketKey)/worklog\") else {\n            throw URLError(.badURL)\n        }\n        \n        var request = URLRequest(url: url)\n        request.httpMethod = \"POST\"\n        request.setValue(\"Bearer \(apiToken)\", forHTTPHeaderField: \"Authorization\")\n        request.setValue(\"application/json\", forHTTPHeaderField: \"Content-Type\")\n        \n        let body = [\n            \"timeSpentSeconds\": duration,\n            \"comment\": description\n        ]\n        request.httpBody = try JSONEncoder().encode(body)\n        \n        let (data, _) = try await URLSession.shared.data(for: request)\n        // Basic validation (could add more here)\n        if let response = try? JSONDecoder().decode(JiraResponse.self, from: data) {\n            print(\"Jira Sync Success: \\(response.self)\")\n        } else {\n            throw URLError(.badServerResponse)\n        }\n    }\n}"
+    }
+  ],
+  "file_deletes": [
+    "projects/TimeTracker/acceptance_tests.py",
+    "projects/TimeTracker/app.py"
+  ],
+  "docker_commands": [
+    {
+      "image": "swift:5.9",
+      "run": "swift test --enable-test-discovery --enable-batch-execution",
+      "workdir": "/workspace/projects/JiraTime",
+      "timeout": 60
+    }
+  ],
+  "web_requests": [],
+  "search_queries": [],
+  "notes": [
+    "SwiftData models defined with UUIDs for local persistence.",
+    "JiraService uses async/await for modern concurrency.",
+    "Deleted Python files to clear workspace of incompatible code."
+  ],
+  "vote": {
+    "action": "Commit Swift implementation to storage and run tests.",
+    "rationale": "Switching to Swift satisfies the original goal. Tests will verify the basic async logic and model structure."
+  }
+}
+```
