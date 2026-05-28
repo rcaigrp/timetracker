@@ -106,3 +106,7 @@ Building the React frontend components (Dashboard, Timer, Settings) to connect t
 ## Turn 27 — Craft (2026-05-28 01:29 UTC)
 
 Created three React functional components (Dashboard, Timer, Settings) using hooks. Components connect to Flask backend endpoints for time logs, projects, and settings management.
+
+## Turn 28 — Craft (2026-05-28 01:32 UTC)
+
+Created the main App.js file to integrate Dashboard, Timer, and Settings components. Implemented global state management for API configuration and timer logic.
