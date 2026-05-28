@@ -102,3 +102,7 @@ Rewriting app.py to ensure complete syntax (specifically the missing closing bra
 ## Turn 26 — Craft (2026-05-28 01:27 UTC)
 
 Building the React frontend components (Dashboard, Timer, Settings) to connect to the Flask backend.
+
+## Turn 27 — Craft (2026-05-28 01:29 UTC)
+
+Created three React functional components (Dashboard, Timer, Settings) using hooks. Components connect to Flask backend endpoints for time logs, projects, and settings management.
