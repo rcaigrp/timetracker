@@ -1,33 +1,41 @@
-from flask import Flask
-from flask_cors import CORS
-import os
 import json
-from datetime import datetime
+import os
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-CORS(app)
 
-# Simple in-memory storage for demo (persistence required by AC)
-TIME_LOGS = []
+CONFIG_FILE = "settings.json"
 
-@app.route('/api/timer/start', methods=['POST'])
-def start_timer():
-    return jsonify({'status': 'started', 'log_id': 1})
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE) as f:
+            return json.load(f)
+    return {}
 
-@app.route('/api/timer/stop', methods=['POST'])
-def stop_timer():
-    return jsonify({'status': 'stopped', 'log_id': 1})
+def save_config(config):
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f)
 
-@app.route('/api/logs', methods=['GET'])
-def get_logs():
-    return jsonify(TIME_LOGS)
+@app.route('/')
+def dashboard():
+    return jsonify({"message": "TimeTracker Dashboard", "status": "active"})
 
-@app.route('/api/config', methods=['GET', 'POST'])
-def config():
+@app.route('/api/settings', methods=['GET', 'POST'])
+def settings():
+    config = load_config()
     if request.method == 'POST':
-        # Mock Jira config storage
-        return jsonify({'url': request.json.get('url'), 'key': request.json.get('api_key')})
-    return jsonify({'url': None, 'key': None})
+        save_config(request.json)
+        return jsonify({"status": "saved", "config": request.json}), 201
+    return jsonify(config)
+
+@app.route('/api/jira/projects', methods=['GET'])
+def jira_projects():
+    config = load_config()
+    # AC 4: Requires config to proceed
+    if not config.get('url'):
+        return jsonify({"error": "Jira URL not configured"}), 400
+    # In a real app, this would make the HTTP request
+    return jsonify({"projects": [{"name": "Test Project", "key": "TP"}]})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
